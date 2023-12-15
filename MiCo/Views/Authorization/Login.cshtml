@@ -1,0 +1,23 @@
+﻿@{
+    ViewData["Title"] = "Login Page";
+}
+<div class="container">
+    <form class="col-sm-4 mx-auto">
+        <div class="form-group mb-2">
+            <label for="exampleInputEmail1"><i class="bi bi-envelope-at-fill"></i> Email or Login:</label>
+            <input type="email" class="form-control mt-1" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email or login">
+        </div>
+        <div class="form-group mb-2">
+            <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> Password:</label>
+            <input type="password" class="form-control  mt-1" id="exampleInputPassword1" placeholder="Enter password">
+            <small id="loginHelp" class="form-text text-muted">Don't have an account yet? <a asp-area="" asp-controller="Authorization" asp-action="Registration">Sign Up!</a></small>
+        </div>
+        <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input check-mico" id="exampleCheck1">
+            <label class="form-check-label" for="exampleCheck1">Remember me</label>
+        </div>
+        <div class="d-flex justify-content-center">
+            <button type="submit" class="btn btn-mico btn-sm">Login</button>
+        </div>
+    </form>
+</div>

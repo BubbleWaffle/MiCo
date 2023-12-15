@@ -58,3 +58,9 @@ body {
 .threads-list-btn {
     width: 50px;
 }
+
+.check-mico:checked {
+    background-color: #00bbff;
+    border-color: #00bbff;
+    box-shadow: none;
+}
