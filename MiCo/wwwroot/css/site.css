@@ -1,0 +1,60 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+/* Custom styles */
+.text-mico {
+    color: #00bbff;
+}
+
+.btn-mico {
+    background-color: #00bbff;
+}
+
+.btn-mico:hover {
+    background-color: #54d1ff;
+}
+
+.border-mico {
+    border-color: #00bbff;
+}
+
+.author {
+    font-size: 10px;
+}
+
+.date {
+    font-size: 12px;
+}
+
+.description {
+    font-size: 11px;
+}
+
+.threads-list-img {
+    width: 100px;
+    height: 100px;
+}
+
+.threads-list-btn {
+    width: 50px;
+}
