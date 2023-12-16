@@ -1,32 +1,38 @@
-﻿@{
+﻿@model MiCo.Models.ViewModels.RegistrationViewModel
+@{
     ViewData["Title"] = "Registration Page";
 }
 <div class="container">
-    <form class="col-sm-4 mx-auto">
+    <form class="col-sm-4 mx-auto" asp-controller="Authorization" asp-action="Registration" method="post">
         <div class="form-group mb-2">
             <label for="exampleInputEmail1"><i class="bi bi-envelope-at-fill"></i> Email:</label>
-            <input type="email" class="form-control mt-1" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+            <input type="email" class="form-control mt-1" placeholder="Enter email" required asp-for="email">
+            <span asp-validation-for="email" class="text-danger"></span>
         </div>
         <div class="form-group mb-2">
             <label for="exampleInputLogin1"><i class="bi bi-marker-tip"></i> Login:</label>
-            <input type="text" class="form-control  mt-1" id="exampleInputLogin1" placeholder="Enter login">
+            <input type="text" class="form-control  mt-1" placeholder="Enter login" required asp-for="login">
+            <span asp-validation-for="login" class="text-danger"></span>
             <small id="loginHelp" class="form-text text-muted">It will set your nickname but you will be able to change it.</small>
         </div>
         <div class="form-group mb-2">
             <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> Password:</label>
-            <input type="password" class="form-control  mt-1" id="exampleInputPassword1" placeholder="Enter password">
+            <input type="password" class="form-control  mt-1" placeholder="Enter password" required asp-for="password">
         </div>
         <div class="form-group mb-2">
             <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> Repeat password:</label>
-            <input type="password" class="form-control  mt-1" id="exampleInputPassword1" placeholder="Repeat password">
+            <input type="password" class="form-control  mt-1" placeholder="Repeat password" required asp-for="confirm_password">
             <small id="registrationHelp" class="form-text text-muted">Already have an account? <a asp-area="" asp-controller="Authorization" asp-action="Login">Log In!</a></small>
         </div>
         <div class="form-check mb-2">
-            <input type="checkbox" class="form-check-input check-mico" id="exampleCheck1">
+            <input type="checkbox" class="form-check-input check-mico" id="exampleCheck1" required>
             <label class="form-check-label" for="exampleCheck1">Accept agreements</label>
         </div>
         <div class="d-flex justify-content-center">
             <button type="submit" class="btn btn-mico btn-sm">Sign up</button>
         </div>
     </form>
+    <div class="d-flex justify-content-center mt-3">
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
 </div>

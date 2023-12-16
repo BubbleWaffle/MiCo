@@ -1,4 +1,5 @@
 using MiCo.Data;
+using MiCo.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MiCoDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
 );
+
+builder.Services.AddScoped<AuthorizationService>();
 
 var app = builder.Build();
 
