@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Login Page";
+    var successMessage = ViewBag.SuccessMessage as string;
 }
 <div class="container">
     <form class="col-sm-4 mx-auto">
@@ -10,7 +11,8 @@
         <div class="form-group mb-2">
             <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> Password:</label>
             <input type="password" class="form-control  mt-1" id="exampleInputPassword1" placeholder="Enter password">
-            <small id="loginHelp" class="form-text text-muted">Don't have an account yet? <a asp-area="" asp-controller="Authorization" asp-action="Registration">Sign Up!</a></small>
+            <small id="loginHelp" class="form-text text-muted">Don't have an account yet? <a asp-area="" asp-controller="Authorization" asp-action="Registration">Sign Up!</a></small><br>
+            <small id="loginHelp" class="form-text text-muted">Forgot password? We can help you <a asp-area="" asp-controller="" asp-action="">remind it!</a></small>
         </div>
         <div class="form-check mb-2">
             <input type="checkbox" class="form-check-input check-mico" id="exampleCheck1">
@@ -20,4 +22,10 @@
             <button type="submit" class="btn btn-mico btn-sm">Login</button>
         </div>
     </form>
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="d-flex justify-content-center mt-3 text-success">
+            <i class="bi bi-check2-circle"></i> @successMessage
+        </div>
+    }
 </div>

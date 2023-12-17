@@ -4,10 +4,12 @@ namespace MiCo.Models.ViewModels
 {
     public class RegistrationViewModel
     {
-        [EmailAddress]
+        [Required]
+        [DataType(DataType.EmailAddress)]
         public string? email { get; set; }
 
         [Required]
+        [DataType (DataType.Text)]
         public string? login { get; set; }
 
         [Required]

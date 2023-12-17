@@ -15,6 +15,7 @@ namespace MiCo.Controllers
 
         public IActionResult Login()
         {
+            ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
             return View();
         }
 
@@ -31,6 +32,8 @@ namespace MiCo.Controllers
                 try
                 {
                     await _authorizationService.RegistrationService(model.email, model.login, model.password, model.confirm_password);
+
+                    TempData["SuccessMessage"] = "We have sent a link to your e-mail address to confirm your registration!";
 
                     return RedirectToAction("Login");
                 }
