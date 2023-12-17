@@ -6,11 +6,11 @@ namespace MiCo.Controllers
 {
     public class AuthorizationController : Controller
     {
-        private readonly AuthorizationService _authorizationService;
+        private readonly RegistrationService _registrationService;
 
-        public AuthorizationController(AuthorizationService authorizationService)
+        public AuthorizationController(RegistrationService registrationService)
         {
-            _authorizationService = authorizationService;
+            _registrationService = registrationService;
         }
 
         public IActionResult Login()
@@ -29,17 +29,16 @@ namespace MiCo.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                var result = await _registrationService.RegisterUser(model.email, model.login, model.password, model.confirm_password);
+
+                if (result.RHsuccess)
                 {
-                    await _authorizationService.RegistrationService(model.email, model.login, model.password, model.confirm_password);
-
-                    TempData["SuccessMessage"] = "We have sent a link to your e-mail address to confirm your registration!";
-
+                    TempData["SuccessMessage"] = result.RHmessage;
                     return RedirectToAction("Login");
                 }
-                catch (ArgumentException ex)
+                else
                 {
-                    ModelState.AddModelError("", ex.Message);
+                    ModelState.AddModelError("", result.RHmessage);
                 }
             }
 

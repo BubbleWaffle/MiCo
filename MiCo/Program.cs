@@ -10,7 +10,7 @@ builder.Services.AddDbContext<MiCoDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
 );
 
-builder.Services.AddScoped<AuthorizationService>();
+builder.Services.AddScoped<RegistrationService>();
 
 var app = builder.Build();
 
