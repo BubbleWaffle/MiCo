@@ -1,8 +1,8 @@
 ﻿namespace MiCo.Helpers
 {
-    public class RegistrationHelper
+    public class ResultHelper
     {
-        public RegistrationHelper(bool success, string message)
+        public ResultHelper(bool success, string message)
         {
             RHsuccess = success;
             RHmessage = message;

@@ -1,5 +1,6 @@
-using MiCo.Data;
+﻿using MiCo.Data;
 using MiCo.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,19 @@ builder.Services.AddDbContext<MiCoDbContext>(
 );
 
 builder.Services.AddScoped<RegistrationService>();
+builder.Services.AddScoped<LoginService>();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.MaxValue; // Ustaw IdleTimeout na nieskończoność
+    options.Cookie.Name = "MiCoCookie"; // Dostosuj nazwę ciasteczka sesji
+});
+
+// Dodaj HttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(); // Dodaj schemat uwierzytelniania opartego na ciasteczkach (cookies)
 
 var app = builder.Build();
 
@@ -26,6 +40,9 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+// Dodaj obsługę sesji między UseRouting() a UseAuthorization()
+app.UseSession();
 
 app.UseAuthorization();
 

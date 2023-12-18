@@ -17,35 +17,35 @@ namespace MiCo.Services
         }
 
         /* Adding new user to database */
-        public async Task<RegistrationHelper> RegisterUser(string? email, string? login, string? password, string? confirm_password)
+        public async Task<ResultHelper> RegisterUser(string? email, string? login, string? password, string? confirm_password)
         {
             /* Validation */
             if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
-                return new RegistrationHelper(false, "Invalid email address!");
+                return new ResultHelper(false, "Invalid email address!");
 
             if (_context.users.Any(u => u.email == email))
-                return new RegistrationHelper(false, "Provided email is already in use!");
+                return new ResultHelper(false, "Provided email is already in use!");
 
             if (string.IsNullOrWhiteSpace(login) || !IsValidLogin(login))
-                return new RegistrationHelper(false, "Invalid login!");
+                return new ResultHelper(false, "Invalid login!");
 
             if (login.Length < 4 || login.Length > 14)
-                return new RegistrationHelper(false, "Login is too short or too long (min 4 characters, max 14 characters)!");
+                return new ResultHelper(false, "Login is too short or too long (min 4 characters, max 14 characters)!");
 
             if (_context.users.Any(u => u.login == login))
-                return new RegistrationHelper(false, "Provided login is already in use!");
-
-            if (password.Length < 8)
-                return new RegistrationHelper(false, "Password is too short (min 8 characters)!");
+                return new ResultHelper(false, "Provided login is already in use!");
 
             if (string.IsNullOrWhiteSpace(password) || !IsValidPassword(password))
-                return new RegistrationHelper(false, "Password must contain special characters and numbers!");
+                return new ResultHelper(false, "Password must contain special characters and numbers!");
 
-            if(string.IsNullOrWhiteSpace(confirm_password))
-                return new RegistrationHelper(false, "You need to confirm password!");
+            if (password.Length < 8)
+                return new ResultHelper(false, "Password is too short (min 8 characters)!");
+
+            if (string.IsNullOrWhiteSpace(confirm_password))
+                return new ResultHelper(false, "You need to confirm password!");
 
             if (confirm_password != password)
-                return new RegistrationHelper(false, "Password does not match!");
+                return new ResultHelper(false, "Password does not match!");
 
             var hashedPassword = HashPassword(password); //Hash password
 
@@ -64,7 +64,7 @@ namespace MiCo.Services
             _context.users.Add(newUser); //Add new user to database
             await _context.SaveChangesAsync();
 
-            return new RegistrationHelper(true, "We have sent a link to your e-mail address to confirm your registration!");
+            return new ResultHelper(true, "We have sent a link to your e-mail address to confirm your registration!");
         }
 
         /* Method helping with email validation */
