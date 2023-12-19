@@ -92,12 +92,13 @@ namespace MiCo.Services
         /* Method hashing password */
         private string HashPassword(string password)
         {
-            byte[] salt;
-            new RNGCryptoServiceProvider().GetBytes(salt = new byte[16]);
+            byte[] salt = new byte[16];
+            RandomNumberGenerator rng = RandomNumberGenerator.Create();
+            rng.GetBytes(salt);
 
             byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
 
-            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(passwordBytes, salt, 10000);
+            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(passwordBytes, salt, 10000, HashAlgorithmName.SHA256);
 
             byte[] hash = pbkdf2.GetBytes(20);
 

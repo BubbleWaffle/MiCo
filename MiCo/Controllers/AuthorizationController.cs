@@ -21,9 +21,8 @@ namespace MiCo.Controllers
         {
             /* If logged in block access */
             if (HttpContext.Session.TryGetValue("UserId", out _))
-            {
                 return RedirectToAction("Index", "Home");
-            }
+
             ViewBag.SuccessMessage = TempData["SuccessMessage"] as string;
 
             return View();
@@ -62,9 +61,7 @@ namespace MiCo.Controllers
         public IActionResult Registration()
         {
             if (HttpContext.Session.TryGetValue("UserId", out _))
-            {
                 return RedirectToAction("Index", "Home");
-            }
 
             return View();
         }

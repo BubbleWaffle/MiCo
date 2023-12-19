@@ -50,15 +50,13 @@ namespace MiCo.Services
             byte[] salt = new byte[16];
             Array.Copy(hashWithSaltBytes, 0, salt, 0, 16);
 
-            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(enteredPassword, salt, 10000);
+            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(enteredPassword, salt, 10000, HashAlgorithmName.SHA256);
             byte[] hash = pbkdf2.GetBytes(20);
 
             for (int i = 0; i < 20; i++)
             {
                 if (hashWithSaltBytes[i + 16] != hash[i])
-                {
                     return false;
-                }
             }
 
             return true;
