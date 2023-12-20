@@ -64,7 +64,7 @@ namespace MiCo.Services
             _context.users.Add(newUser); //Add new user to database
             await _context.SaveChangesAsync();
 
-            return new ResultHelper(true, "We have sent a link to your e-mail address to confirm your registration!");
+            return new ResultHelper(true, "Your account has been registered, now you can log in!");
         }
 
         /* Method helping with email validation */

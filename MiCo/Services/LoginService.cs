@@ -29,6 +29,9 @@ namespace MiCo.Services
             if (user != null && VerifyPassword(password, user.password))
             {
                 _contextAccessor.HttpContext?.Session.SetInt32("UserId", user.id);
+                _contextAccessor.HttpContext?.Session.SetString("Nickname", user.nickname);
+                if (user.pfp != null) _contextAccessor.HttpContext?.Session.SetString("PFP", user.pfp);
+                else _contextAccessor.HttpContext?.Session.SetString("PFP", "https://via.placeholder.com/40");
                 return new ResultHelper(true, "Login successful!");
             }
 

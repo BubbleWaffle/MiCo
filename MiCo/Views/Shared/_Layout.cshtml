@@ -13,23 +13,39 @@
     <header>
         <nav class="navbar navbar-expand-lg navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
             <div class="container">
-                <a class="navbar-brand fs-3" asp-area="" asp-controller="Home" asp-action="Index"><span class="text-mico">Mi</span>Co</a>
-                <form action="/" method="get" class="col-lg-4">
-                    <div class="input-group">
-                        <button class="btn btn-mico text-secondary" type="submit" id="button-addon1">
-                            <i class="bi bi-search text-secondary"></i>
-                        </button>
-                        <input type="text" class="form-control border-mico" name="Searching" placeholder="Search..." aria-label="Example text with button addon" aria-describedby="button-addon1">
-                    </div>
-                </form>
-                @if (Context.Session.GetInt32("UserId") != null)
-                {
-                    <a class="nav-link" asp-area="" asp-controller="Authorization" asp-action="Logout"><i class="bi bi-box-arrow-left"></i> Wyloguj się</a>
-                }
-                else
-                {
-                    <a class="nav-link" asp-area="" asp-controller="Authorization" asp-action="Login"><i class="bi bi-box-arrow-in-right"></i> Zaloguj się</a>
-                }
+                <div class="col">
+                    <a class="navbar-brand fs-3" asp-area="" asp-controller="Home" asp-action="Index"><span class="text-mico">Mi</span>Co</a>
+                </div>
+                <div class="col">
+                    <form action="/" method="get">
+                        <div class="input-group">
+                            <button class="btn btn-mico text-secondary" type="submit" id="button-addon1">
+                                <i class="bi bi-search text-secondary"></i>
+                            </button>
+                            <input type="text" class="form-control border-mico" name="Searching" placeholder="Search..." aria-label="Example text with button addon" aria-describedby="button-addon1">
+                        </div>
+                    </form>
+                </div>
+                <div class="col d-flex flex-row flex-row-reverse align-items-center">
+                    @if (Context.Session.GetInt32("UserId") != null)
+                    {
+                        <div class="btn-group">
+                            <button class="btn btn-dark btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @Context.Session.GetString("Nickname")
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Your profile</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Authorization" asp-action="Logout"><i class="bi bi-box-arrow-left"></i> Log out</a></li>
+                            </ul>
+                        </div>
+                        <img class="me-2 flex-shrink-0 rounded-circle avatar" src="@Context.Session.GetString("PFP")" alt="Generic placeholder image">
+                    }
+                    else
+                    {
+                        <a class="nav-link" asp-area="" asp-controller="Authorization" asp-action="Registration"><i class="bi bi-pencil-square"></i> Sign up</a>
+                        <a class="nav-link me-3" asp-area="" asp-controller="Authorization" asp-action="Login"><i class="bi bi-box-arrow-in-right"></i> Log in</a>
+                    }
+                </div>
             </div>
         </nav>
     </header>
