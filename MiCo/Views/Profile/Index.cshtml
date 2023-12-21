@@ -1,7 +1,54 @@
-﻿@{
+﻿@model MiCo.Models.ViewModels.ProfileEditViewModel
+@{
     ViewData["Title"] = "Profile Page";
 }
 <div class="container">
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit profile</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form class="colmx-auto" asp-controller="Profile" asp-action="Edit" method="post">
+                        <div class="form-group mb-2">
+                            <label for="exampleInputNickname1"><i class="bi bi-pen-fill"></i> Nickname:</label>
+                            <input type="text" class="form-control mt-1" placeholder="Enter nickname" value="Nickname" required asp-for="nickname">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="exampleInputLogin1"><i class="bi bi-marker-tip"></i> Login:</label>
+                            <input type="text" class="form-control  mt-1" placeholder="Enter login" value="Login" required asp-for="login">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i>Old password:</label>
+                            <input type="password" class="form-control  mt-1" placeholder="Enter old password" required asp-for="old_password">
+                            <small id="loginHelp" class="form-text text-muted">If you want to make changes you have to enter password!</small>
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> New password:</label>
+                            <input type="password" class="form-control  mt-1" placeholder="Enter new password" required asp-for="new_password">
+                        </div>
+                        <div class="form-group mb-2">
+                            <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> Repeat new password:</label>
+                            <input type="password" class="form-control  mt-1" placeholder="Repeat password" required asp-for="confirm_password">
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" class="btn btn-mico btn-sm">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <div class="d-flex justify-content-center mt-3">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
 
         <div class="col-3 justify-content-center text-center">
@@ -27,7 +74,7 @@
             </div>
             <div class="col mt-2">
                 <div class="btn-group btn-group-sm d-grid d-lg-flex" role="group" aria-label="Small button group">
-                    <button type="button" class="btn btn-outline-warning">Edit</button>
+                    <button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#exampleModal">Edit</button>
                     <button type="button" class="btn btn-outline-success">Follow(?)</button>
                     <button type="button" class="btn btn-outline-danger">Report</button>
                     <button type="button" class="btn btn-outline-danger">Ban</button>
