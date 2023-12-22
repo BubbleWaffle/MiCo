@@ -13,6 +13,7 @@ builder.Services.AddDbContext<MiCoDbContext>(
 
 builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<ProfileService>();
 
 builder.Services.AddSession(options =>
 {

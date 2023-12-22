@@ -1,12 +1,23 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MiCo.Models.ViewModels;
+using MiCo.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MiCo.Controllers
 {
     public class ProfileController : Controller
     {
-        public IActionResult Index()
+        private readonly ProfileService _profileService;
+
+        public ProfileController(ProfileService profileService)
         {
-            return View();
+            _profileService = profileService;
+        }
+
+        [HttpGet("{login}")]
+        public async Task<IActionResult> Index([FromRoute(Name = "login")] string login)
+        {
+            var result = await _profileService.Profile(login, this);
+            return View(result);
         }
     }
 }
