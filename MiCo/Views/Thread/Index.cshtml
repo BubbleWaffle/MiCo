@@ -1,4 +1,167 @@
 ﻿@{
     ViewData["Title"] = "Thread Page";
 }
-<h1>Thread page</h1>
+<div class="container">
+
+    <!-- Main thread -->
+    <div class="row">
+        <h3>Title</h3>
+    </div>
+    <div class="row align-item-center justify-content-start mt-2">
+        <div class="col-auto p-0">
+            <img class="flex-shrink-0 rounded-circle avatar" src="https://via.placeholder.com/50" alt="Generic placeholder image">
+        </div>
+        <div class="col d-flex align-items-center justify-content-start p-0 ps-2 pt-2">
+            <h6>Nickname <span class="badge rounded-pill text-bg-warning">MOD</span> <small class="text-muted">#Login</small></h6>
+        </div>
+        <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
+            <button type="button" class="btn btn-mico btn-sm me-2">Edit</button>
+            <button type="button" class="btn btn-danger btn-sm me-2">Delete</button>
+            <small>Date</small>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-auto d-flex p-0">
+            <div class="vr vr-size-and-position"></div>
+        </div>
+        <div class="col d-flex flex-column">
+            <p class="align-items-start">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ut volutpat sapien, aliquet vestibulum odio. Mauris laoreet porttitor nibh eu ultrices. Maecenas quis sodales ex, feugiat efficitur nisl. Nulla et metus tellus. Etiam turpis tortor, eleifend nec est a, dapibus iaculis erat. Sed commodo, sem non lacinia scelerisque, eros metus mollis enim, sit amet placerat dolor lacus vel mauris. Integer consequat nisi purus, in pretium tellus interdum at.
+                Pellentesque id dignissim sapien, sit amet aliquam ipsum. Praesent et nibh auctor, rutrum felis a, facilisis nulla. Praesent quis eleifend ante, sed facilisis nisi. Aenean porta risus at tempor viverra. In finibus tincidunt magna eu convallis. Duis sed sagittis libero. Donec vel gravida metus. Cras feugiat mi ut mi vulputate, et aliquam metus sollicitudin.
+            </p>
+            <div class="row d-grid justify-content-center align-items-center mb-2">
+                <img class="flex-shrink-0 mt-2" src="https://via.placeholder.com/768x350" alt="Generic placeholder image">
+                <img class="flex-shrink-0 mt-2" src="https://via.placeholder.com/768x350" alt="Generic placeholder image">
+                <img class="flex-shrink-0 mt-2" src="https://via.placeholder.com/768x350" alt="Generic placeholder image">
+            </div>
+            <div class="row d-flex">
+                <div class="col-auto text-warning">
+                    <i class="bi bi-star-fill"></i> : 123
+                </div>
+                <div class="col-10">
+                    <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
+                        <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                        <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                        <button type="button" class="btn btn-outline-secondary"><i class="bi bi-chat-left-dots"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reply to main thread -->
+            <div class="row align-item-center justify-content-start mt-2">
+                <div class="col-auto p-0">
+                    <img class="flex-shrink-0 rounded-circle avatar" src="https://via.placeholder.com/50" alt="Generic placeholder image">
+                </div>
+                <div class="col d-flex align-items-center justify-content-start p-0 ps-2 pt-2">
+                    <h6>Nickname <span class="badge rounded-pill text-bg-warning">MOD</span> <small class="text-muted">#Login</small></h6>
+                </div>
+                <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
+                    <button type="button" class="btn btn-mico btn-sm me-2">Edit</button>
+                    <button type="button" class="btn btn-danger btn-sm me-2">Delete</button>
+                    <small>Date</small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-auto d-flex p-0">
+                    <div class="vr vr-size-and-position"></div>
+                </div>
+                <div class="col d-flex flex-column">
+                    <p class="align-items-start">
+                        Cosik chyba działa.
+                    </p>
+                    <div class="row d-flex">
+                        <div class="col-auto text-warning">
+                            <i class="bi bi-star-fill"></i> : 123
+                        </div>
+                        <div class="col-10">
+                            <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                <button type="button" class="btn btn-outline-secondary"><i class="bi bi-chat-left-dots"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reply to reply/subthread -->
+                    <div class="row align-item-center justify-content-start mt-2">
+                        <div class="col-auto p-0">
+                            <img class="flex-shrink-0 rounded-circle avatar" src="https://via.placeholder.com/50" alt="Generic placeholder image">
+                        </div>
+                        <div class="col d-flex align-items-center justify-content-start p-0 ps-2 pt-2">
+                            <h6>Nickname <span class="badge rounded-pill text-bg-warning">MOD</span> <small class="text-muted">#Login</small></h6>
+                        </div>
+                        <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
+                            <button type="button" class="btn btn-mico btn-sm me-2">Edit</button>
+                            <button type="button" class="btn btn-danger btn-sm me-2">Delete</button>
+                            <small>Date</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-auto d-flex p-0">
+                            <div class="vr vr-size-and-position"></div>
+                        </div>
+                        <div class="col d-flex flex-column">
+                            <p class="align-items-start">
+                                Nom. Pa jaki fajny piesek:
+                            </p>
+                            <div class="row d-grid justify-content-center align-items-center mb-2">
+                                <img class="flex-shrink-0 mt-2" src="https://via.placeholder.com/250x450" alt="Generic placeholder image">
+                            </div>
+                            <div class="row d-flex">
+                                <div class="col-auto text-warning">
+                                    <i class="bi bi-star-fill"></i> : 123
+                                </div>
+                                <div class="col-10">
+                                    <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
+                                        <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                        <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                        <button type="button" class="btn btn-outline-secondary"><i class="bi bi-chat-left-dots"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Reply to main thread -->
+            <div class="row align-item-center justify-content-start mt-2">
+                <div class="col-auto p-0">
+                    <img class="flex-shrink-0 rounded-circle avatar" src="https://via.placeholder.com/50" alt="Generic placeholder image">
+                </div>
+                <div class="col d-flex align-items-center justify-content-start p-0 ps-2 pt-2">
+                    <h6>Nickname <span class="badge rounded-pill text-bg-warning">MOD</span> <small class="text-muted">#Login</small></h6>
+                </div>
+                <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
+                    <button type="button" class="btn btn-mico btn-sm me-2">Edit</button>
+                    <button type="button" class="btn btn-danger btn-sm me-2">Delete</button>
+                    <small>Date</small>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-auto d-flex p-0">
+                    <div class="vr vr-size-and-position"></div>
+                </div>
+                <div class="col d-flex flex-column">
+                    <p class="align-items-start">
+                        Hmmm. Ciekawe.
+                    </p>
+                    <div class="row d-flex mt-2">
+                        <div class="col-auto text-warning">
+                            <i class="bi bi-star-fill"></i> : 123
+                        </div>
+                        <div class="col-10">
+                            <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                <button type="button" class="btn btn-outline-secondary"><i class="bi bi-chat-left-dots"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

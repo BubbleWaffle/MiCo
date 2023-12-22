@@ -88,3 +88,13 @@ body {
     max-height: 400px;
     min-height: 50px;
 }
+
+.vr-size-and-position {
+    padding-left: 3px;
+    margin-left: 18px;
+}
+
+.thread-img {
+    max-height: 100%;
+    max-width: 600px;
+}
