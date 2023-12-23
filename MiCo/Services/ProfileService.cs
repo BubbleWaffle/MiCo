@@ -19,6 +19,7 @@ namespace MiCo.Services
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
+            /* If user doesn't exist return empty view */
             if (user == null)
             {
                 return Task.FromResult(new FullProfileViewModel());
@@ -26,6 +27,7 @@ namespace MiCo.Services
 
             string pfp_url = user.pfp ?? "../content/default/pfp_default.svg";
 
+            /* Create Profile object */
             var profileViewModel = new ProfileViewModel
             {
                 nickname = user.nickname,
@@ -35,6 +37,7 @@ namespace MiCo.Services
                 role = user.role
             };
 
+            /* Create full profile object */
             var fullProfileViewModel = new FullProfileViewModel
             {
                 Profile = profileViewModel
