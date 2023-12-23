@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/MiCo.styles.css" asp-append-version="true" />
+    <link rel="icon" href="~/content/default/MICO.svg" type="image/svg" />
 </head>
 <body>
     <header>
@@ -34,7 +35,11 @@
                                 @Context.Session.GetString("Nickname")
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index" asp-route-login="@Context.Session.GetString("Login")">Your profile</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index" asp-route-login="@Context.Session.GetString("Login")"><i class="bi bi-person-circle"></i> Your profile</a></li>
+                                @if (Context.Session.GetInt32("Role") == 1)
+                                {
+                                    <li><a class="dropdown-item" asp-area="" asp-controller="Justice" asp-action="Index"><i class="bi bi-hammer"></i> Justice!</a></li>
+                                }
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Authorization" asp-action="Logout"><i class="bi bi-box-arrow-left"></i> Log out</a></li>
                             </ul>
                         </div>
