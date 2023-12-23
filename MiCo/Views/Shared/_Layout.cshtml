@@ -34,11 +34,15 @@
                                 @Context.Session.GetString("Nickname")
                             </button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">Your profile</a></li>
+                                <li><a class="dropdown-item" asp-area="" asp-controller="Profile" asp-action="Index" asp-route-login="@Context.Session.GetString("Login")">Your profile</a></li>
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Authorization" asp-action="Logout"><i class="bi bi-box-arrow-left"></i> Log out</a></li>
                             </ul>
                         </div>
-                        <img class="me-2 flex-shrink-0 rounded-circle avatar" src="@Context.Session.GetString("PFP")" alt="Generic placeholder image">
+                        @if (Context.Session.GetInt32("Role") == 1)
+                        {
+                            <span class="badge rounded-pill text-bg-warning">MOD</span>
+                        }
+                        <img class="me-2 flex-shrink-0 rounded-circle avatar border" src="@Context.Session.GetString("PFP")" alt="Generic placeholder image">
                     }
                     else
                     {

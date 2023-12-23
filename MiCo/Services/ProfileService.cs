@@ -17,23 +17,20 @@ namespace MiCo.Services
         /* Fill profile with data */
         public Task<FullProfileViewModel> Profile(string? login, ProfileController controller)
         {
-            string pfp_url;
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
             if (user == null)
             {
-                controller.Response.Redirect("/");
                 return Task.FromResult(new FullProfileViewModel());
             }
 
-            if (user.pfp == null) pfp_url = "https://via.placeholder.com/40";
-            else pfp_url = user.pfp;
+            string pfp_url = user.pfp ?? "../content/default/pfp_default.svg";
 
             var profileViewModel = new ProfileViewModel
             {
                 nickname = user.nickname,
                 login = user.login,
-                creation_date = user.creation_date,
+                creation_date = user.creation_date.DateTime,
                 pfp = pfp_url,
                 role = user.role
             };

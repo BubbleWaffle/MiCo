@@ -31,8 +31,9 @@ namespace MiCo.Services
                 _contextAccessor.HttpContext?.Session.SetInt32("UserId", user.id);
                 _contextAccessor.HttpContext?.Session.SetString("Nickname", user.nickname);
                 _contextAccessor.HttpContext?.Session.SetString("Login", user.login);
+                _contextAccessor.HttpContext?.Session.SetInt32("Role", user.role);
                 if (user.pfp != null) _contextAccessor.HttpContext?.Session.SetString("PFP", user.pfp);
-                else _contextAccessor.HttpContext?.Session.SetString("PFP", "https://via.placeholder.com/40");
+                else _contextAccessor.HttpContext?.Session.SetString("PFP", "../content/default/pfp_default.svg");
                 return new ResultHelper(true, "Login successful!");
             }
 

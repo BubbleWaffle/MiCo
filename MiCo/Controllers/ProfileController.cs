@@ -17,6 +17,10 @@ namespace MiCo.Controllers
         public async Task<IActionResult> Index([FromRoute(Name = "login")] string login)
         {
             var result = await _profileService.Profile(login, this);
+
+            if (result.Profile == null)
+                return RedirectToAction("Index", "Home");
+
             return View(result);
         }
     }

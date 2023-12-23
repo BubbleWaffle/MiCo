@@ -15,4 +15,9 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\content\thread\" />
+    <Folder Include="wwwroot\content\pfp\" />
+  </ItemGroup>
+
 </Project>

@@ -11,7 +11,7 @@ namespace MiCo.Models.ViewModels
         public string login { get; set; } = null!;
 
         [Required]
-        public DateTimeOffset creation_date { get; set; }
+        public DateTime creation_date { get; set; }
 
         [Required]
         public string pfp { get; set; } = null!;
