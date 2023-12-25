@@ -1,4 +1,4 @@
-﻿@model MiCo.Models.ViewModels.FullProfileViewModel
+﻿@model MiCo.Models.ViewModels.ProfileViewModel
 @{
     ViewData["Title"] = "Profile Page";
 }
@@ -138,22 +138,22 @@
         <div class="col-3 justify-content-center text-center">
             <div class="col">
                 <label for="formFile" class="rounded-circle pfp-mouse">
-                    <img class="flex-shrink-0 pfp rounded-circle border" src="@Model.Profile.pfp" alt="Generic placeholder image">
+                    <img class="flex-shrink-0 pfp rounded-circle border" src="@Model.ProfileContent.pfp" alt="Generic placeholder image">
                 </label>
                 <input class="form-control visually-hidden" type="file" id="formFile">
             </div>
             <div class="col">
                 <div class="fs-5">
-                    @Model.Profile.nickname
+                    @Model.ProfileContent.nickname
                 </div>
-                    @if (Model.Profile.role == 1)
+                    @if (Model.ProfileContent.role == 1)
                     {
                     <small><span class="badge rounded-pill text-bg-warning">MOD</span></small>
                     }
-                <small>#@Model.Profile.login</small>
+                <small>#@Model.ProfileContent.login</small>
             </div>
             <div class="col">
-                <small><i>Joined:</i> @Model.Profile.creation_date</small>
+                <small><i>Joined:</i> @Model.ProfileContent.creation_date</small>
             </div>
             <div class="col d-flex justify-content-center">
                 <div class="text-warning me-2">
@@ -166,18 +166,18 @@
             <div class="col mt-2">
                 <div class="btn-group btn-group-sm d-grid d-md-inline-flex" role="group" aria-label="Small button group">
 
-                    @if (Model.Profile.login == Context.Session.GetString("Login"))
+                    @if (Model.ProfileContent.login == Context.Session.GetString("Login"))
                     {
                         <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModalDelete">Delete</button>
                     }
 
-                    @if (Model.Profile.login != Context.Session.GetString("Login") && Context.Session.GetInt32("UserId") != null && Context.Session.GetInt32("Role") != 1)
+                    @if (Model.ProfileContent.login != Context.Session.GetString("Login") && Context.Session.GetInt32("UserId") != null && Context.Session.GetInt32("Role") != 1)
                     {
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModalReport">Report</button>
                     }
 
-                    @if (Model.Profile.login != Context.Session.GetString("Login") && Context.Session.GetInt32("Role") == 1 )
+                    @if (Model.ProfileContent.login != Context.Session.GetString("Login") && Context.Session.GetInt32("Role") == 1 )
                     {
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModalBan">Ban</button>
                     }
@@ -187,9 +187,12 @@
 
         <div class="col-9">
             <div class="fw-bold fs-4">
-                Nickname threads:
+                @Model.ProfileContent.nickname threads:
             </div>
-            <button type="button" class="btn btn-mico btn-sm mb-2"><i class="bi bi-plus-circle"></i> Creat new topic</button>
+            @if (Model.ProfileContent.login == Context.Session.GetString("Login"))
+            {
+                <button type="button" class="btn btn-mico btn-sm mb-2"><i class="bi bi-plus-circle"></i> Creat new topic</button>
+            }
             <ul class="list-unstyled">
                 <li class="media border d-flex align-items-center p-2">
                     <img class="mr-3 flex-shrink-0 threads-list-img rounded" src="https://via.placeholder.com/100" alt="Generic placeholder image">

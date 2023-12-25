@@ -6,9 +6,9 @@ namespace MiCo.Controllers
 {
     public class ProfileController : Controller
     {
-        private readonly ProfileService _profileService;
+        private readonly ProfileContentService _profileService;
 
-        public ProfileController(ProfileService profileService)
+        public ProfileController(ProfileContentService profileService)
         {
             _profileService = profileService;
         }
@@ -20,7 +20,7 @@ namespace MiCo.Controllers
             var result = await _profileService.Profile(login, this);
 
             /* If profile doesn't exist go to home page */
-            if (result.Profile == null)
+            if (result.ProfileContent == null)
                 return RedirectToAction("Index", "Home");
 
             return View(result);

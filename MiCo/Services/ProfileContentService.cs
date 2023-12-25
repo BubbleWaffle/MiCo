@@ -5,30 +5,30 @@ using Microsoft.AspNetCore.Http;
 
 namespace MiCo.Services
 {
-    public class ProfileService
+    public class ProfileContentService
     {
         private readonly MiCoDbContext _context;
 
-        public ProfileService(MiCoDbContext context)
+        public ProfileContentService(MiCoDbContext context)
         {
             _context = context;
         }
 
         /* Fill profile with data */
-        public Task<FullProfileViewModel> Profile(string? login, ProfileController controller)
+        public Task<ProfileViewModel> Profile(string? login, ProfileController controller)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
             /* If user doesn't exist return empty view */
             if (user == null)
             {
-                return Task.FromResult(new FullProfileViewModel());
+                return Task.FromResult(new ProfileViewModel());
             }
 
             string pfp_url = user.pfp ?? "../content/default/pfp_default.svg";
 
             /* Create Profile object */
-            var profileViewModel = new ProfileViewModel
+            var profileViewModel = new ProfileContentViewModel
             {
                 nickname = user.nickname,
                 login = user.login,
@@ -38,9 +38,9 @@ namespace MiCo.Services
             };
 
             /* Create full profile object */
-            var fullProfileViewModel = new FullProfileViewModel
+            var fullProfileViewModel = new ProfileViewModel
             {
-                Profile = profileViewModel
+                ProfileContent = profileViewModel
             };
 
             return Task.FromResult(fullProfileViewModel);
