@@ -1,0 +1,38 @@
+﻿@model MiCo.Models.ViewModels.ProfileEditViewModel
+@{
+    ViewData["Title"] = "Edit Profile Page";
+}
+<div class="container">
+    <div class="row">
+        <!-- Edit -->
+        <form class="col-sm-4 mx-auto" asp-controller="Profile" asp-action="Edit" method="post">
+            <div class="form-group mb-2">
+                <label for="exampleInputNickname1"><i class="bi bi-pen-fill"></i> Nickname:</label>
+                <input type="text" class="form-control mt-1" placeholder="@Context.Session.GetString("Nickname")" asp-for="nickname">
+            </div>
+            <div class="form-group mb-2">
+                <label for="exampleInputLogin1"><i class="bi bi-marker-tip"></i> Login:</label>
+                <input type="text" class="form-control mt-1" placeholder="@Context.Session.GetString("Login")" asp-for="login">
+            </div>
+            <div class="form-group mb-2">
+                <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i>Old password:</label>
+                <input type="password" class="form-control mt-1" placeholder="Enter old password" required asp-for="old_password">
+                <small id="editHelp" class="form-text text-danger">If you want to make changes you have to enter password!</small>
+            </div>
+            <div class="form-group mb-2">
+                <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> New password:</label>
+                <input type="password" class="form-control mt-1" placeholder="Enter new password" asp-for="new_password">
+            </div>
+            <div class="form-group mb-2">
+                <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> Repeat new password:</label>
+                <input type="password" class="form-control mt-1" placeholder="Repeat new password" asp-for="confirm_password">
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn btn-mico btn-sm">Save changes</button>
+            </div>
+        </form>
+        <div class="d-flex justify-content-center mt-3">
+            <div asp-validation-summary="All" class="text-danger"></div>
+        </div>
+    </div>
+</div>

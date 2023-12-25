@@ -22,10 +22,39 @@ namespace MiCo.Controllers
             var result = await _profileContentService.ProfileContent(login);
 
             /* If profile doesn't exist go to home page */
-            if (result.ProfileContent == null)
+            if (result == null)
                 return RedirectToAction("Index", "Home");
 
             return View(result);
+        }
+
+        /* Edit access action */
+        public IActionResult Edit()
+        {
+            /* If logged in block access */
+            if (!HttpContext.Session.TryGetValue("UserId", out _))
+                return RedirectToAction("Index", "Home");
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(ProfileEditViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _profileEditService.EditProfile(HttpContext.Session.GetInt32("UserId"), model.nickname,
+                    model.login, model.old_password, model.new_password, model.confirm_password);
+                if (result.RHsuccess)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("", result.RHmessage);
+                }
+            }
+            return View(model);
         }
     }
 }

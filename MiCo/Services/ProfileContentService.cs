@@ -15,14 +15,14 @@ namespace MiCo.Services
         }
 
         /* Fill profile with data */
-        public Task<ProfileViewModel> ProfileContent(string? login)
+        public Task<ProfileContentViewModel> ProfileContent(string? login)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
             /* If user doesn't exist return empty view */
             if (user == null)
             {
-                return Task.FromResult(new ProfileViewModel());
+                return Task.FromResult(new ProfileContentViewModel());
             }
 
             string pfp_url = user.pfp ?? "../content/default/pfp_default.svg";
@@ -37,13 +37,7 @@ namespace MiCo.Services
                 role = user.role
             };
 
-            /* Create full profile object */
-            var profileViewModel = new ProfileViewModel
-            {
-                ProfileContent = profileContentViewModel
-            };
-
-            return Task.FromResult(profileViewModel);
+            return Task.FromResult(profileContentViewModel);
         }
     }
 }

@@ -55,6 +55,9 @@ namespace MiCo.Services
                     if (confirm_password != new_password)
                         return new ResultHelper(false, "New password does not match!");
 
+                    if (old_password == new_password)
+                        return new ResultHelper(false, "New password cannot be the same as the old one!");
+
                     if (!VerifyPassword(old_password, user.password))
                         return new ResultHelper(false, "Incorrect password!");
 

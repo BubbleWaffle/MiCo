@@ -1,53 +1,8 @@
-﻿@model MiCo.Models.ViewModels.ProfileViewModel
+﻿@model MiCo.Models.ViewModels.ProfileContentViewModel
 @{
     ViewData["Title"] = "Profile Page";
 }
 <div class="container">
-
-    <!-- Edit -->
-    <div class="modal fade" id="exampleModalEdit" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit profile</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form class="colmx-auto" asp-controller="Profile" asp-action="Edit" method="post">
-                        <div class="form-group mb-2">
-                            <label for="exampleInputNickname1"><i class="bi bi-pen-fill"></i> Nickname:</label>
-                            <input type="text" class="form-control mt-1" placeholder="@Model.ProfileContent.nickname">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="exampleInputLogin1"><i class="bi bi-marker-tip"></i> Login:</label>
-                            <input type="text" class="form-control mt-1" placeholder="@Model.ProfileContent.login">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i>Old password:</label>
-                            <input type="password" class="form-control mt-1" placeholder="Enter old password" required>
-                            <small id="editHelp" class="form-text text-danger">If you want to make changes you have to enter password!</small>
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> New password:</label>
-                            <input type="password" class="form-control mt-1" placeholder="Enter new password">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="exampleInputPassword1"><i class="bi bi-pass-fill"></i> Repeat new password:</label>
-                            <input type="password" class="form-control mt-1" placeholder="Repeat new password">
-                        </div>
-                        <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-mico btn-sm">Save changes</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <div class="d-flex justify-content-center mt-3">
-                        <div asp-validation-summary="All" class="text-danger"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Report -->
     <div class="modal fade" id="exampleModalReport" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -138,22 +93,22 @@
         <div class="col-3 justify-content-center text-center">
             <div class="col">
                 <label for="formFile" class="rounded-circle pfp-mouse">
-                    <img class="flex-shrink-0 pfp rounded-circle border" src="@Model.ProfileContent.pfp" alt="Generic placeholder image">
+                    <img class="flex-shrink-0 pfp rounded-circle border" src="@Model.pfp" alt="Generic placeholder image">
                 </label>
                 <input class="form-control visually-hidden" type="file" id="formFile">
             </div>
             <div class="col">
                 <div class="fs-5">
-                    @Model.ProfileContent.nickname
+                    @Model.nickname
                 </div>
-                    @if (Model.ProfileContent.role == 1)
+                    @if (Model.role == 1)
                     {
                     <small><span class="badge rounded-pill text-bg-warning">MOD</span></small>
                     }
-                <small>#@Model.ProfileContent.login</small>
+                <small>#@Model.login</small>
             </div>
             <div class="col">
-                <small><i>Joined:</i> @Model.ProfileContent.creation_date</small>
+                <small><i>Joined:</i> @Model.creation_date</small>
             </div>
             <div class="col d-flex justify-content-center">
                 <div class="text-warning me-2">
@@ -166,18 +121,18 @@
             <div class="col mt-2">
                 <div class="btn-group btn-group-sm d-grid d-md-inline-flex" role="group" aria-label="Small button group">
 
-                    @if (Model.ProfileContent.login == Context.Session.GetString("Login"))
+                    @if (Model.login == Context.Session.GetString("Login"))
                     {
-                        <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
+                        <a type="button" class="btn btn-warning" asp-controller="Profile" asp-action="Edit">Edit</a>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModalDelete">Delete</button>
                     }
 
-                    @if (Model.ProfileContent.login != Context.Session.GetString("Login") && Context.Session.GetInt32("UserId") != null && Context.Session.GetInt32("Role") != 1)
+                    @if (Model.login != Context.Session.GetString("Login") && Context.Session.GetInt32("UserId") != null && Context.Session.GetInt32("Role") != 1)
                     {
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModalReport">Report</button>
                     }
 
-                    @if (Model.ProfileContent.login != Context.Session.GetString("Login") && Context.Session.GetInt32("Role") == 1 )
+                    @if (Model.login != Context.Session.GetString("Login") && Context.Session.GetInt32("Role") == 1 )
                     {
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModalBan">Ban</button>
                     }
@@ -187,9 +142,9 @@
 
         <div class="col-9">
             <div class="fw-bold fs-4">
-                @Model.ProfileContent.nickname threads:
+                @Model.nickname threads:
             </div>
-            @if (Model.ProfileContent.login == Context.Session.GetString("Login"))
+            @if (Model.login == Context.Session.GetString("Login"))
             {
                 <button type="button" class="btn btn-mico btn-sm mb-2"><i class="bi bi-plus-circle"></i> Creat new topic</button>
             }

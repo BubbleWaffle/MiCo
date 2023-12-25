@@ -16,7 +16,14 @@
         </div>
 
         <div class="col col-xs-7 col-xl-7">
-            <button type="button" class="btn btn-mico btn-sm mb-2"><i class="bi bi-plus-circle"></i> Creat new topic</button>
+            @if (Context.Session.GetInt32("UserId") == null)
+            {
+                <a type="button" class="btn btn-mico btn-sm mb-2" asp-controller="Authorization" asp-action="Login"><i class="bi bi-plus-circle"></i> Creat new topic</a>
+            }
+            else
+            {
+                <a type="button" class="btn btn-mico btn-sm mb-2" asp-controller="Thread" asp-action="Create"><i class="bi bi-plus-circle"></i> Creat new topic</a>
+            }
             <ul class="list-unstyled">
                 <li class="media border d-flex align-items-center p-2">
                     <img class="mr-3 flex-shrink-0 threads-list-img rounded" src="https://via.placeholder.com/100" alt="Generic placeholder image">
