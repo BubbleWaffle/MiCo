@@ -217,37 +217,6 @@ namespace MiCo.Migrations
                     b.ToTable("threads");
                 });
 
-            modelBuilder.Entity("MiCo.Models.Tokens", b =>
-                {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
-
-                    b.Property<DateTimeOffset>("expiration_date")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<bool>("expired")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("id_user")
-                        .HasColumnType("int");
-
-                    b.Property<string>("token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("type")
-                        .HasColumnType("int");
-
-                    b.HasKey("id");
-
-                    b.HasIndex("id_user");
-
-                    b.ToTable("tokens");
-                });
-
             modelBuilder.Entity("MiCo.Models.Users", b =>
                 {
                     b.Property<int>("id")
@@ -405,17 +374,6 @@ namespace MiCo.Migrations
                     b.Navigation("author");
 
                     b.Navigation("reply");
-                });
-
-            modelBuilder.Entity("MiCo.Models.Tokens", b =>
-                {
-                    b.HasOne("MiCo.Models.Users", "user")
-                        .WithMany()
-                        .HasForeignKey("id_user")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("MiCo.Models.Images", b =>

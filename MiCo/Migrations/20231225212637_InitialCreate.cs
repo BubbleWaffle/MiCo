@@ -146,29 +146,6 @@ namespace MiCo.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tokens",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    id_user = table.Column<int>(type: "int", nullable: false),
-                    token = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    expiration_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    expired = table.Column<bool>(type: "bit", nullable: false),
-                    type = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tokens", x => x.id);
-                    table.ForeignKey(
-                        name: "FK_tokens_users_id_user",
-                        column: x => x.id_user,
-                        principalTable: "users",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "likes",
                 columns: table => new
                 {
@@ -295,11 +272,6 @@ namespace MiCo.Migrations
                 name: "IX_threads_id_reply",
                 table: "threads",
                 column: "id_reply");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tokens_id_user",
-                table: "tokens",
-                column: "id_user");
         }
 
         /// <inheritdoc />
@@ -319,9 +291,6 @@ namespace MiCo.Migrations
 
             migrationBuilder.DropTable(
                 name: "thread_tags");
-
-            migrationBuilder.DropTable(
-                name: "tokens");
 
             migrationBuilder.DropTable(
                 name: "images");

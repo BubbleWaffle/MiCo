@@ -19,6 +19,7 @@ namespace MiCo.Services
             _contextAccessor = contextAccessor;
         }
 
+        /* Edit existing user */
         public async Task<ResultHelper> EditProfile(int? id, string? nickname, string? login, string? old_password, string? new_password, string? confirm_password)
         {
             var user = _context.users.FirstOrDefault(u => u.id == id);
@@ -44,8 +45,11 @@ namespace MiCo.Services
                     user.login = login;
                 }
 
-                if (!string.IsNullOrWhiteSpace(new_password) && !string.IsNullOrWhiteSpace(confirm_password))
+                if (!string.IsNullOrWhiteSpace(new_password))
                 {
+                    if (string.IsNullOrWhiteSpace(confirm_password))
+                        return new ResultHelper(false, "You have to confirm your new password!");
+
                     if (!IsValidPassword(new_password))
                         return new ResultHelper(false, "Password must contain special characters and numbers!");
 

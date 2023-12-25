@@ -63,7 +63,6 @@ namespace MiCo.Data
         }
 
         public DbSet<Users> users { get; set; }
-        public DbSet<Tokens> tokens { get; set; }
         public DbSet<Reports> reports { get; set; }
         public DbSet<Bans> bans { get; set; }
         public DbSet<Likes> likes { get; set; }

@@ -22,7 +22,7 @@ namespace MiCo.Controllers
             var result = await _profileContentService.ProfileContent(login);
 
             /* If profile doesn't exist go to home page */
-            if (result == null)
+            if (result.login == null)
                 return RedirectToAction("Index", "Home");
 
             return View(result);
