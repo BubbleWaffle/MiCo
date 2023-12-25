@@ -14,6 +14,7 @@ builder.Services.AddDbContext<MiCoDbContext>(
 builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<ProfileContentService>();
+builder.Services.AddScoped<ProfileEditService>();
 
 builder.Services.AddSession(options =>
 {

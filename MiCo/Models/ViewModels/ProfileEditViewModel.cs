@@ -6,11 +6,11 @@ namespace MiCo.Models.ViewModels
     {
         [Required]
         [DataType(DataType.Text)]
-        public string nickname { get; set; } = null!;
+        public string? nickname { get; set; }
 
         [Required]
         [DataType(DataType.Text)]
-        public string login { get; set; } = null!;
+        public string? login { get; set; }
 
         [Required]
         [DataType(DataType.Password)]

@@ -58,7 +58,7 @@ namespace MiCo.Services
                 email = email,
                 creation_date = DateTimeOffset.Now,
                 role = 0,
-                status = -1
+                status = 0
             };
 
             _context.users.Add(newUser); //Add new user to database

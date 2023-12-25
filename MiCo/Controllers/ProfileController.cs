@@ -6,18 +6,20 @@ namespace MiCo.Controllers
 {
     public class ProfileController : Controller
     {
-        private readonly ProfileContentService _profileService;
+        private readonly ProfileContentService _profileContentService;
+        private readonly ProfileEditService _profileEditService;
 
-        public ProfileController(ProfileContentService profileService)
+        public ProfileController(ProfileContentService profileContentService, ProfileEditService profileEditService)
         {
-            _profileService = profileService;
+            _profileContentService = profileContentService;
+            _profileEditService = profileEditService;
         }
 
         /* return view of specific profile */
         [HttpGet("{login}")]
         public async Task<IActionResult> Index([FromRoute(Name = "login")] string login)
         {
-            var result = await _profileService.Profile(login, this);
+            var result = await _profileContentService.ProfileContent(login);
 
             /* If profile doesn't exist go to home page */
             if (result.ProfileContent == null)

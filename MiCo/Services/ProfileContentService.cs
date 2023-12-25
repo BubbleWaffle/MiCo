@@ -15,7 +15,7 @@ namespace MiCo.Services
         }
 
         /* Fill profile with data */
-        public Task<ProfileViewModel> Profile(string? login, ProfileController controller)
+        public Task<ProfileViewModel> ProfileContent(string? login)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
@@ -28,7 +28,7 @@ namespace MiCo.Services
             string pfp_url = user.pfp ?? "../content/default/pfp_default.svg";
 
             /* Create Profile object */
-            var profileViewModel = new ProfileContentViewModel
+            var profileContentViewModel = new ProfileContentViewModel
             {
                 nickname = user.nickname,
                 login = user.login,
@@ -38,12 +38,12 @@ namespace MiCo.Services
             };
 
             /* Create full profile object */
-            var fullProfileViewModel = new ProfileViewModel
+            var profileViewModel = new ProfileViewModel
             {
-                ProfileContent = profileViewModel
+                ProfileContent = profileContentViewModel
             };
 
-            return Task.FromResult(fullProfileViewModel);
+            return Task.FromResult(profileViewModel);
         }
     }
 }
