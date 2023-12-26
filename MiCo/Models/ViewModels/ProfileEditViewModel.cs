@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 
 namespace MiCo.Models.ViewModels
 {
@@ -9,6 +10,10 @@ namespace MiCo.Models.ViewModels
 
         [DataType(DataType.Text)]
         public string? login { get; set; }
+
+        public IFormFile? file { get; set; }
+
+        public string? delete_pfp { get; set; } //Checkbox value
 
         [Required]
         [DataType(DataType.Password)]

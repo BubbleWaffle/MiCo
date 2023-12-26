@@ -38,16 +38,21 @@ namespace MiCo.Controllers
             return View();
         }
 
+        /* Edit profile action */
         [HttpPost]
         public async Task<IActionResult> Edit(ProfileEditViewModel model)
         {
             if (ModelState.IsValid)
             {
+                /* Convert string to bool */
+                bool deletePfp = !string.IsNullOrEmpty(model.delete_pfp) && model.delete_pfp.ToLower() == "true";
+
                 var result = await _profileEditService.EditProfile(HttpContext.Session.GetInt32("UserId"), model.nickname,
-                    model.login, model.old_password, model.new_password, model.confirm_password);
+                    model.login, model.file, deletePfp, model.old_password, model.new_password, model.confirm_password);
+
                 if (result.RHsuccess)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("index", HttpContext.Session.GetString("Login"));
                 }
                 else
                 {

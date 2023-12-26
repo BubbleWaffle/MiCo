@@ -98,3 +98,9 @@ body {
     max-height: 100%;
     max-width: 600px;
 }
+
+.del-img:checked {
+    background-color: red;
+    border-color: red;
+    box-shadow: none;
+}

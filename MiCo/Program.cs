@@ -1,6 +1,7 @@
 ﻿using MiCo.Data;
 using MiCo.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,12 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MiCoDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
 );
+
+// Konfiguracja obsługi przesyłania plików (upload)
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 60000000; // 60 MB limit
+});
 
 builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<LoginService>();

@@ -12,15 +12,17 @@ namespace MiCo.Services
     {
         private readonly MiCoDbContext _context;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ProfileEditService(MiCoDbContext context, IHttpContextAccessor contextAccessor)
+        public ProfileEditService(MiCoDbContext context, IHttpContextAccessor contextAccessor, IWebHostEnvironment hostEnvironment)
         {  
             _context = context;
             _contextAccessor = contextAccessor;
+            _hostEnvironment = hostEnvironment;
         }
 
         /* Edit existing user */
-        public async Task<ResultHelper> EditProfile(int? id, string? nickname, string? login, string? old_password, string? new_password, string? confirm_password)
+        public async Task<ResultHelper> EditProfile(int? id, string? nickname, string? login, IFormFile? file, bool delete_pfp, string? old_password, string? new_password, string? confirm_password)
         {
             var user = _context.users.FirstOrDefault(u => u.id == id);
 
@@ -44,6 +46,31 @@ namespace MiCo.Services
 
                     user.login = login;
                 }
+
+                if (file != null && file.Length > 0)
+                {
+                    if (file.Length > 15728640)
+                        return new ResultHelper(false, "Image is too big (MAX 15MB)!");
+                    // Generuj unikalną nazwę pliku, używając id użytkownika i rozszerzenia oryginalnego pliku
+                    string uniqueFileName = $"{id}.{Path.GetExtension(file.FileName)}";
+
+                    // Uzyskaj ścieżkę do folderu, w którym będą przechowywane pliki
+                    string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "pfp");
+
+                    // Pełna ścieżka do zapisu pliku
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    // Zapisz plik na dysku
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(fileStream);
+                    }
+
+                    // Zaktualizuj ścieżkę w bazie danych (przykładowo, dodając ścieżkę do user.pfp)
+                    user.pfp = $"../content/pfp/{uniqueFileName}";
+                }
+
+                if (delete_pfp) user.pfp = null;
 
                 if (!string.IsNullOrWhiteSpace(new_password))
                 {

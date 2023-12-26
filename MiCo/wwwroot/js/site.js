@@ -1,4 +1,9 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿/* Edit profile checkbox action */
+var formFileInput = document.getElementById('formFile');
+var deleteCheckbox = document.getElementById('flexCheckDefault');
+var deleteText = document.getElementById('deleteText');
 
-// Write your JavaScript code.
+deleteCheckbox.addEventListener('change', function () {
+    formFileInput.disabled = this.checked;
+    deleteText.classList.toggle('text-danger', this.checked);
+});
