@@ -6,51 +6,50 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
+
+/* Connect database */
 builder.Services.AddDbContext<MiCoDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
 );
 
-// Konfiguracja obsługi przesyłania plików (upload)
+/* Configure file transfer (60MB max) */
 builder.Services.Configure<FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 60000000; // 60 MB limit
+    options.MultipartBodyLengthLimit = 60000000;
 });
 
+/* Add services */
 builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<ProfileContentService>();
 builder.Services.AddScoped<ProfileEditService>();
 
+/* Configure session */
 builder.Services.AddSession(options =>
 {
-    options.IdleTimeout = TimeSpan.MaxValue; // Ustaw IdleTimeout na nieskończoność
-    options.Cookie.Name = "MiCoCookie"; // Dostosuj nazwę ciasteczka sesji
+    options.IdleTimeout = TimeSpan.MaxValue;
+    options.Cookie.Name = "MiCoCookie";
 });
 
-// Dodaj HttpContextAccessor
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(); // Dodaj schemat uwierzytelniania opartego na ciasteczkach (cookies)
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
 app.UseHttpsRedirection();
+
 app.UseStaticFiles();
 
 app.UseRouting();
 
-// Dodaj obsługę sesji między UseRouting() a UseAuthorization()
 app.UseSession();
 
 app.UseAuthorization();

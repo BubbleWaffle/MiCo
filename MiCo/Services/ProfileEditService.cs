@@ -51,23 +51,20 @@ namespace MiCo.Services
                 {
                     if (file.Length > 15728640)
                         return new ResultHelper(false, "Image is too big (MAX 15MB)!");
-                    // Generuj unikalną nazwę pliku, używając id użytkownika i rozszerzenia oryginalnego pliku
-                    string uniqueFileName = $"{id}.{Path.GetExtension(file.FileName)}";
 
-                    // Uzyskaj ścieżkę do folderu, w którym będą przechowywane pliki
-                    string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "pfp");
+                    string uniqueFileName = $"{id}.{Path.GetExtension(file.FileName)}"; //Use user id as file name
 
-                    // Pełna ścieżka do zapisu pliku
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                    string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "pfp"); //Path to folder with avatars
 
-                    // Zapisz plik na dysku
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName); //Full path with file name
+
+                    /* Save file */
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(fileStream);
                     }
 
-                    // Zaktualizuj ścieżkę w bazie danych (przykładowo, dodając ścieżkę do user.pfp)
-                    user.pfp = $"../content/pfp/{uniqueFileName}";
+                    user.pfp = $"../content/pfp/{uniqueFileName}"; //Update path in database
                 }
 
                 if (delete_pfp) user.pfp = null;
