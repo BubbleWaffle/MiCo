@@ -6,6 +6,7 @@
     <div class="row">
         <!-- Edit -->
         <form class="col-sm-4 mx-auto" asp-controller="Profile" asp-action="Edit" enctype="multipart/form-data" method="post">
+            <h3>Edit your profile:</h3>
             <div class="form-group mb-2">
                 <label for="exampleInputNickname1"><i class="bi bi-pen-fill"></i> Nickname:</label>
                 <input type="text" class="form-control mt-1" placeholder="@Context.Session.GetString("Nickname")" asp-for="nickname">

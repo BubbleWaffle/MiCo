@@ -22,7 +22,7 @@ namespace MiCo.Services
         }
 
         /* Edit existing user */
-        public async Task<ResultHelper> EditProfile(int? id, string? nickname, string? login, IFormFile? file, bool delete_pfp, string? old_password, string? new_password, string? confirm_password)
+        public async Task<ResultHelper> ProfileEdit(int? id, string? nickname, string? login, IFormFile? file, bool delete_pfp, string? old_password, string? new_password, string? confirm_password)
         {
             var user = _context.users.FirstOrDefault(u => u.id == id);
 

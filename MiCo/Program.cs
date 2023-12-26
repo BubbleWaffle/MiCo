@@ -24,6 +24,7 @@ builder.Services.AddScoped<RegistrationService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<ProfileContentService>();
 builder.Services.AddScoped<ProfileEditService>();
+builder.Services.AddScoped<ProfileReportService>();
 
 /* Configure session */
 builder.Services.AddSession(options =>
