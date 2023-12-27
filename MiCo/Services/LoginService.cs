@@ -26,7 +26,7 @@ namespace MiCo.Services
             var user = _context.users.FirstOrDefault(u => u.email == emailOrLogin || u.login == emailOrLogin);
 
             /* If email or login and password are correct create session */
-            if (user != null && VerifyPassword(password, user.password))
+            if (user != null && VerifyPassword(password, user.password) && user.status != -1 && user.status != 1)
             {
                 _contextAccessor.HttpContext?.Session.SetInt32("UserId", user.id);
                 _contextAccessor.HttpContext?.Session.SetString("Nickname", user.nickname);

@@ -11,13 +11,15 @@ namespace MiCo.Controllers
         private readonly ProfileContentService _profileContentService;
         private readonly ProfileEditService _profileEditService;
         private readonly ProfileReportService _profileReportService;
+        private readonly ProfileDeleteService _profileDeleteService;
 
-        public ProfileController(MiCoDbContext context, ProfileContentService profileContentService, ProfileEditService profileEditService, ProfileReportService profileReportService)
+        public ProfileController(MiCoDbContext context, ProfileContentService profileContentService, ProfileEditService profileEditService, ProfileReportService profileReportService, ProfileDeleteService profileDeleteService)
         {
             _context = context;
             _profileContentService = profileContentService;
             _profileEditService = profileEditService;
             _profileReportService = profileReportService;
+            _profileDeleteService = profileDeleteService;
         }
 
         /* return view of specific profile */
@@ -36,7 +38,7 @@ namespace MiCo.Controllers
         /* Edit access action */
         public IActionResult Edit()
         {
-            /* If logged in block access */
+            /* If not logged in block access */
             if (!HttpContext.Session.TryGetValue("UserId", out _))
                 return RedirectToAction("Index", "Home");
 
@@ -98,6 +100,38 @@ namespace MiCo.Controllers
                 {
                     ViewBag.Success = result.RHsuccess;
                     ViewBag.SuccessMessage = result.RHmessage;
+                }
+                else
+                {
+                    ViewBag.Success = result.RHsuccess;
+                    ViewBag.SuccessMessage = result.RHmessage;
+                }
+            }
+            return View(model);
+        }
+
+        /* Delete access action */
+        public IActionResult Delete()
+        {
+            /* If not logged in block access */
+            if (!HttpContext.Session.TryGetValue("UserId", out _))
+                return RedirectToAction("Index", "Home");
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(ProfileDeleteViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _profileDeleteService.ProfileDelete(HttpContext.Session.GetInt32("UserId"), model.password);
+
+                if (result.RHsuccess)
+                {
+                    ViewBag.Success = result.RHsuccess;
+                    ViewBag.SuccessMessage = result.RHmessage;
+                    return RedirectToAction("Index", "Home");
                 }
                 else
                 {
