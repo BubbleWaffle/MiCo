@@ -6,7 +6,7 @@
     <div class="row">
         <!-- Report -->
         <form class="col-sm-4 mx-auto" asp-controller="Profile" asp-action="Report" method="post">
-            <h3>Report</h3>
+            <h3>Report @ViewBag.name</h3>
             <label for="exampleFormControlTextarea1" class="form-label">Reason:</label>
             <textarea class="form-control" id="reason" rows="3" maxlength="300" placeholder="Enter reason..." asp-for="reason" required></textarea>
             <small id="loginHelp" class="form-text text-danger">Max 300 characters!</small>

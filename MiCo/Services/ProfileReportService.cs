@@ -25,6 +25,9 @@ namespace MiCo.Services
             if (existingReport != null)
                 return new ResultHelper(false, "You have recently reported this user! Take a break.");
 
+            if (string.IsNullOrWhiteSpace(reason))
+                return new ResultHelper(false, "You have to enter reason!");
+
             /* Creat report object */
             var newReport = new Reports
             {

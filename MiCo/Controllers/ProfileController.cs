@@ -76,6 +76,8 @@ namespace MiCo.Controllers
             if (user == null || !HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetString("Login") == login || HttpContext.Session.GetInt32("Role") == 1)
                 return RedirectToAction("Index", "Home");
 
+            ViewBag.name = user.login;
+
             return View();
         }
 
