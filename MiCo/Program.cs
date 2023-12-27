@@ -27,6 +27,8 @@ builder.Services.AddScoped<ProfileEditService>();
 builder.Services.AddScoped<ProfileReportService>();
 builder.Services.AddScoped<ProfileDeleteService>();
 builder.Services.AddScoped<BanService>();
+builder.Services.AddScoped<UnbanService>();
+builder.Services.AddHostedService<AutoUnbanService>();
 
 /* Configure session */
 builder.Services.AddSession(options =>
