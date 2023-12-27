@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MiCo.Migrations
 {
     [DbContext(typeof(MiCoDbContext))]
-    [Migration("20231225212637_InitialCreate")]
+    [Migration("20231227155939_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -36,7 +36,7 @@ namespace MiCo.Migrations
                     b.Property<DateTimeOffset>("ban_date")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset>("ban_until")
+                    b.Property<DateTimeOffset?>("ban_until")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<int>("id_banned_user")

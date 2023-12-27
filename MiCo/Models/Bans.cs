@@ -21,7 +21,6 @@ namespace MiCo.Models
         [Required]
         public DateTimeOffset ban_date { get; set; }
 
-        [Required]
-        public DateTimeOffset ban_until { get; set; }
+        public DateTimeOffset? ban_until { get; set; }
     }
 }

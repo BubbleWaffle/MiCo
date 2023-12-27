@@ -33,7 +33,7 @@ namespace MiCo.Migrations
                     b.Property<DateTimeOffset>("ban_date")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset>("ban_until")
+                    b.Property<DateTimeOffset?>("ban_until")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<int>("id_banned_user")

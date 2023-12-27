@@ -67,7 +67,7 @@ namespace MiCo.Migrations
                     id_moderator = table.Column<int>(type: "int", nullable: false),
                     reason = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ban_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
-                    ban_until = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
+                    ban_until = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {

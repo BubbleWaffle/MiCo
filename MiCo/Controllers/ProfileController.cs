@@ -22,14 +22,16 @@ namespace MiCo.Controllers
             _profileDeleteService = profileDeleteService;
         }
 
-        /* return view of specific profile */
+        /* Return view of specific profile */
         [HttpGet("{login}")]
         public async Task<IActionResult> Index([FromRoute(Name = "login")] string login)
         {
             var result = await _profileContentService.ProfileContent(login);
 
+            var user = _context.users.FirstOrDefault(u => u.login == login);
+
             /* If profile doesn't exist go to home page */
-            if (result.login == null)
+            if (result.login == null || user == null || user.status == -1 || user.status == 1)
                 return RedirectToAction("Index", "Home");
 
             return View(result);
@@ -69,13 +71,14 @@ namespace MiCo.Controllers
             return View(model);
         }
 
+        /* Report access action */
         [HttpGet("Report/{login}")]
         public IActionResult Report([FromRoute(Name = "login")] string login)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
             /* If user doesn't exist return home page */
-            if (user == null || !HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetString("Login") == login || HttpContext.Session.GetInt32("Role") == 1)
+            if (user == null || !HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetInt32("UserId") == user.id || HttpContext.Session.GetInt32("Role") == 1 || user.status == -1 || user.status == 1)
                 return RedirectToAction("Index", "Home");
 
             ViewBag.name = user.login;
@@ -83,13 +86,14 @@ namespace MiCo.Controllers
             return View();
         }
 
+        /* Report profile action */
         [HttpPost("Report/{login}")]
         public async Task<IActionResult> Report([FromRoute(Name = "login")] string login, ProfileReportViewModel model)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
             /* If user doesn't exist return home page */
-            if (user == null || !HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetString("Login") == login || HttpContext.Session.GetInt32("Role") == 1)
+            if (user == null || !HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetInt32("UserId") == user.id || HttpContext.Session.GetInt32("Role") == 1)
                 return RedirectToAction("Index", "Home");
 
             if (ModelState.IsValid)
@@ -120,6 +124,7 @@ namespace MiCo.Controllers
             return View();
         }
 
+        /* Delete profile action */
         [HttpPost]
         public async Task<IActionResult> Delete(ProfileDeleteViewModel model)
         {
