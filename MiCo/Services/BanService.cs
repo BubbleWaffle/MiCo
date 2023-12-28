@@ -28,6 +28,10 @@ namespace MiCo.Services
             if (existing_ban != null)
                 return new ResultHelper(false, "User is already banned!");
 
+            /* Remove all reports for the banned user */
+            var reportsToDelete = _context.reports.Where(r => r.id_reported_user == banned_user.id);
+            _context.reports.RemoveRange(reportsToDelete);
+
             /* Creat report object */
             var newBan = new Bans
             {
