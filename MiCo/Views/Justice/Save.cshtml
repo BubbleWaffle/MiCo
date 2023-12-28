@@ -1,0 +1,19 @@
+﻿@model MiCo.Models.ViewModels.SaveViewModel
+@{
+    ViewData["Title"] = "Save " + @ViewBag.nickname + " - ";
+}
+<div class="container">
+    <div class="row">
+
+        <!-- Save -->
+        <form class="col-sm-5 mx-auto mt-5" asp-controller="Justice" asp-action="Save" method="post">
+            <h5 class="text-success text-center mb-3">Are you sure you want to save @ViewBag.name?</h5>
+            <input type="hidden" name="login" value="@ViewBag.id" asp-for="save_user" />
+            <div class="d-flex justify-content-center mt-2">
+                <a type="submit" class="btn btn-mico btn-sm me-1" asp-controller="Justice" asp-action="Index">Back justice page</a>
+                <button type="submit" class="btn btn-success btn-sm ms-1">Save him!</button>
+            </div>
+        </form>
+
+    </div>
+</div>

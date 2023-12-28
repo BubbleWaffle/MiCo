@@ -3,27 +3,6 @@
     ViewData["Title"] = "Punish them all! - ";
 }
 <div class="container">
-
-    <!-- Save -->
-    <div class="modal fade" id="exampleModalSave" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Save user</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5 class="text-success text-center mb-3">Are you sure you want to save this user?</h5>
-                    <form class="colmx-auto" asp-controller="Justice" asp-action="Save" method="post">
-                        <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-success btn-sm">Save him!</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Unban -->
     <div class="modal fade" id="exampleModalUnban" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -72,7 +51,7 @@
                             <td>@report.reason</td>
                             <td>@report.report_date.ToString("dd/MM/yyyy")</td>
                             <td>
-                                <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalSave">Save!</button>
+                                <a type="button" class="btn btn-success btn-sm" asp-controller="Justice" asp-action="Save=@report.id">Save!</a>
                                 <a type="button" class="btn btn-danger btn-sm" asp-controller="Justice" asp-action="Ban=@report.reported_user.login">Ban!</a>
                             </td>
                         </tr>

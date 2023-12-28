@@ -29,6 +29,7 @@ builder.Services.AddScoped<ProfileDeleteService>();
 builder.Services.AddScoped<BanService>();
 builder.Services.AddScoped<UnbanService>();
 builder.Services.AddScoped<JusticeContentService>();
+builder.Services.AddScoped<SaveService>();
 
 /* Add hosted services */
 builder.Services.AddHostedService<AutoUnbanService>();
