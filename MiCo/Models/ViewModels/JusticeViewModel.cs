@@ -2,8 +2,8 @@
 {
     public class JusticeViewModel
     {
-        public List<Reports>? _reports { get; set; }
+        public List<Reports> _reports { get; set; } = null!;
 
-        public List<Bans>? _bans { get; set; }
+        public List<Bans> _bans { get; set; } = null!;
     }
 }

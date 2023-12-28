@@ -20,6 +20,9 @@ namespace MiCo.Services
             if (string.IsNullOrWhiteSpace(reason))
                 return new ResultHelper(false, "You have to enter reason!");
 
+            if (reason.Length > 300)
+                return new ResultHelper(false, "Your reason is too long!");
+
             if (ban_until <= DateTimeOffset.Now)
                 return new ResultHelper(false, "Invalid date!");
 

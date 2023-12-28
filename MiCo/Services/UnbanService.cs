@@ -1,4 +1,6 @@
 ﻿using MiCo.Data;
+using MiCo.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace MiCo.Services
 {
@@ -9,6 +11,30 @@ namespace MiCo.Services
         public UnbanService(MiCoDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<ResultHelper> JusticeUnban(int id)
+        {
+            var user = await _context.users.FindAsync(id);
+
+            if (user != null)
+            {
+                var banToRemove = await _context.bans.FirstOrDefaultAsync(b => b.id_banned_user == id);
+
+                if (banToRemove != null) 
+                {
+                    _context.bans.Remove(banToRemove);
+                    user.status = 0;
+                    _context.users.Update(user);
+                    await _context.SaveChangesAsync();
+
+                    return new ResultHelper(true, "User unbanned successfully!");
+                }
+
+                return new ResultHelper(false, "This ban doesn't exist!");
+            }
+
+            return new ResultHelper(false, "This user doesn't exist!");
         }
 
         /* Method unbanning users */

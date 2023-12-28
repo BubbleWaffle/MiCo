@@ -1,0 +1,19 @@
+﻿@model MiCo.Models.ViewModels.UnbanViewModel
+@{
+    ViewData["Title"] = "Unban " + @ViewBag.nickname + " - ";
+}
+<div class="container">
+    <div class="row">
+
+        <!-- Unban -->
+        <form class="col-sm-5 mx-auto mt-5" asp-controller="Justice" asp-action="Unban" method="post">
+            <h5 class="text-warning text-center mb-3">Are you sure you want to unban @ViewBag.name ?</h5>
+            <input type="hidden" name="login" value="@ViewBag.login" asp-for="unban_user" />
+            <div class="d-flex justify-content-center mt-2">
+                <a type="submit" class="btn btn-mico btn-sm me-1" asp-controller="Justice" asp-action="Index">Back to justice page</a>
+                <button type="submit" class="btn btn-warning btn-sm ms-1">Unban him!</button>
+            </div>
+        </form>
+
+    </div>
+</div>

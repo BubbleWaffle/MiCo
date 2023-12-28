@@ -28,6 +28,9 @@ namespace MiCo.Services
             if (string.IsNullOrWhiteSpace(reason))
                 return new ResultHelper(false, "You have to enter reason!");
 
+            if (reason.Length > 300)
+                return new ResultHelper(false, "Your reason is too long!");
+
             /* Creat report object */
             var newReport = new Reports
             {

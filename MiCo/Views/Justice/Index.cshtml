@@ -3,107 +3,92 @@
     ViewData["Title"] = "Punish them all! - ";
 }
 <div class="container">
-    <!-- Unban -->
-    <div class="modal fade" id="exampleModalUnban" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Unban user</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <h5 class="text-warning text-center mb-3">Are you sure you want to unban this user?</h5>
-                    <form class="colmx-auto" asp-controller="Justice" asp-action="Unban" method="post">
-                        <div class="d-flex justify-content-center">
-                            <button type="submit" class="btn btn-warning btn-sm">Unban him!</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="row d-grid">
 
-        <h1>Reports:</h1>
+        @if (Model._reports.Any())
+        {
+            int index = 1;
+            <h1>Reports:</h1>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Reported user:</th>
-                    <th scope="col">Reported by:</th>
-                    <th scope="col">Reason:</th>
-                    <th scope="col">Date of report:</th>
-                    <th scope="col">Action:</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model._reports != null)
-                {
-                    int index = 1;
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Reported user:</th>
+                        <th scope="col">Reported by:</th>
+                        <th scope="col">Reason:</th>
+                        <th scope="col">Date of report:</th>
+                        <th scope="col">Action:</th>
+                    </tr>
+                </thead>
+                <tbody>
                     @foreach (var report in Model._reports)
                     {
                         <tr>
-                            <th scope="row">@index</th>
-                            <td>@report.reported_user.login</td>
-                            <td>@report.reporting_user.login</td>
-                            <td>@report.reason</td>
-                            <td>@report.report_date.ToString("dd/MM/yyyy")</td>
-                            <td>
-                                <a type="button" class="btn btn-success btn-sm" asp-controller="Justice" asp-action="Save=@report.id">Save!</a>
-                                <a type="button" class="btn btn-danger btn-sm" asp-controller="Justice" asp-action="Ban=@report.reported_user.login">Ban!</a>
+                            <th scope="row" class="border">@index</th>
+                            <td class="border">@report.reported_user.login</td>
+                            <td class="border">@report.reporting_user.login</td>
+                            <td class="border">@report.reason</td>
+                            <td class="border">@report.report_date.ToString("dd/MM/yyyy")</td>
+                            <td class="border">
+                                <a type="button" class="btn btn-success btn-sm mt-1" asp-controller="Justice" asp-action="Save=@report.id">Save!</a>
+                                <a type="button" class="btn btn-danger btn-sm mt-1" asp-controller="Justice" asp-action="Ban=@report.reported_user.login">Ban!</a>
                             </td>
                         </tr>
                         index++;
                     }
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        }
 
-        <h1>Bans:</h1>
+        @if (Model._bans.Any())
+        {
+            int index = 1;
+            <h1>Bans:</h1>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Banned user:</th>
-                    <th scope="col">Banned by:</th>
-                    <th scope="col">Reason:</th>
-                    <th scope="col">Date of ban:</th>
-                    <th scope="col">Bannned until:</th>
-                    <th scope="col">Action:</th>
-                </tr>
-            </thead>
-            <tbody>
-                @if (Model._bans != null)
-                {
-                    int index = 1;
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Banned user:</th>
+                        <th scope="col">Banned by:</th>
+                        <th scope="col">Reason:</th>
+                        <th scope="col">Date of ban:</th>
+                        <th scope="col">Bannned until:</th>
+                        <th scope="col">Action:</th>
+                    </tr>
+                </thead>
+                <tbody>
                     @foreach (var ban in Model._bans)
                     {
                         <tr>
-                            <th scope="row">@index</th>
-                            <td>@ban.banned_user.login</td>
-                            <td>@ban.moderator.login</td>
-                            <td>@ban.reason</td>
+                            <th scope="row" class="border">@index</th>
+                            <td class="border">@ban.banned_user.login</td>
+                            <td class="border">@ban.moderator.login</td>
+                            <td class="border">@ban.reason</td>
                             <td>@ban.ban_date.ToString("dd/MM/yyyy")</td>
                             @if (ban.ban_until == null)
                             {
-                                <td class="text-danger">Banned permanently!</td>
+                                <td class="text-danger border">Banned permanently!</td>
                             }
                             else
                             {
-                                <td>@ban.ban_until?.ToString("dd/MM/yyyy")</td>
+                                <td class="border">@ban.ban_until?.ToString("dd/MM/yyyy")</td>
                             }
-                            <td>
-                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModalUnban">Unban!</button>
+                            <td class="border">
+                                <a type="button" class="btn btn-warning btn-sm" asp-controller="Justice" asp-action="Unban=@ban.banned_user.login">Unban!</a>
                             </td>
                         </tr>
                         index++;
                     }
-                }
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        }
+
+        @if (!Model._reports.Any() && !Model._bans.Any())
+        {
+            <h1 class="text-mico">MiCo world is clean! There is nothing to do! <i class="bi bi-emoji-dizzy-fill"></i></h1>
+        }
 
     </div>
 </div>

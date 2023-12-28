@@ -8,7 +8,7 @@
         <form class="col-sm-4 mx-auto" asp-controller="Profile" asp-action="Report" method="post">
             <h3>Report @ViewBag.name</h3>
             <label for="exampleFormControlTextarea1" class="form-label">Reason:</label>
-            <textarea class="form-control" id="reason" rows="3" maxlength="300" placeholder="Enter reason..." asp-for="reason" required></textarea>
+            <textarea class="form-control" id="reason" rows="3" placeholder="Enter reason..." asp-for="reason" required></textarea>
             <small id="loginHelp" class="form-text text-danger">Max 300 characters!</small>
             <div class="d-flex justify-content-center">
                 <a type="submit" class="btn btn-mico btn-sm mt-2 me-1" asp-controller="Home" asp-action="Index">Back to home</a>
