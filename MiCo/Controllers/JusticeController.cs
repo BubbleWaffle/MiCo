@@ -9,21 +9,25 @@ namespace MiCo.Controllers
     public class JusticeController : Controller
     {
         private readonly MiCoDbContext _context;
+        private readonly JusticeContentService _contentService;
         private readonly BanService _banService;
 
-        public JusticeController(MiCoDbContext context, BanService banService)
+        public JusticeController(MiCoDbContext context, JusticeContentService contentService, BanService banService)
         {
             _context = context;
+            _contentService = contentService;
             _banService = banService;
         }
 
         [Route("/Justice/Index")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (!HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetInt32("Role") != 1 )
                 return RedirectToAction("Index", "Home");
 
-            return View();
+            var result = await _contentService.JusticeContent();
+
+            return View(result);
         }
 
         /* Specific user to ban */
@@ -37,6 +41,7 @@ namespace MiCo.Controllers
                 return RedirectToAction("Index", "Home");
 
             ViewBag.name = user.login;
+            ViewBag.nickname = user.nickname;
 
             return View();
         }

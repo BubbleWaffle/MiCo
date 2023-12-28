@@ -82,6 +82,7 @@ namespace MiCo.Controllers
                 return RedirectToAction("Index", "Home");
 
             ViewBag.name = user.login;
+            ViewBag.nickname = user.nickname;
 
             return View();
         }

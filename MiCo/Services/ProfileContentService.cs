@@ -1,7 +1,5 @@
-﻿using MiCo.Controllers;
-using MiCo.Data;
+﻿using MiCo.Data;
 using MiCo.Models.ViewModels;
-using Microsoft.AspNetCore.Http;
 
 namespace MiCo.Services
 {

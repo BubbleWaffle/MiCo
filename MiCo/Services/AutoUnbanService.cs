@@ -1,6 +1,4 @@
-﻿using MiCo.Data;
-
-namespace MiCo.Services
+﻿namespace MiCo.Services
 {
     public class AutoUnbanService : IHostedService, IDisposable
     {
