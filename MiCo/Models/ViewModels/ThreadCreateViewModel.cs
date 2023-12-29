@@ -10,6 +10,8 @@ namespace MiCo.Models.ViewModels
         [Required]
         public string description { get; set; } = null!;
 
+        public string? tags { get; set; }
+
         public List<IFormFile>? files { get; set; }
     }
 }

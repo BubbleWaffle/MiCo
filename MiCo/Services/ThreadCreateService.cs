@@ -2,6 +2,7 @@
 using MiCo.Helpers;
 using MiCo.Models;
 using MiCo.Models.ViewModels;
+using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
 namespace MiCo.Services
@@ -27,6 +28,8 @@ namespace MiCo.Services
         {
             if (model != null && id != null)
             {
+                string[]? tagsArray = null;
+
                 if (string.IsNullOrWhiteSpace(model.title) && !IsValidTitle(model.title))
                     return new ResultHelper(false, "Invalid title!");
 
@@ -42,6 +45,16 @@ namespace MiCo.Services
                 if (model.files != null && model.files.Count > 3)
                     return new ResultHelper(false, "You can send only 3 files!");
 
+                if (!string.IsNullOrWhiteSpace(model.tags))
+                {
+                    tagsArray = model.tags.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (!tagsArray.All(tag => IsValidTags(tag)))
+                        return new ResultHelper(false, "Invalid tags!");
+
+                    tagsArray = tagsArray.Select(tag => $"#{tag.Trim()}").ToArray();
+                }
+
                 var thread = new Threads
                 {
                     id_author = id.Value,
@@ -53,6 +66,44 @@ namespace MiCo.Services
 
                 _context.threads.Add(thread);
                 await _context.SaveChangesAsync();
+
+                if (tagsArray != null)
+                {
+                    foreach (var tagText in tagsArray)
+                    {
+                        var existingTag = await _context.tags.FirstOrDefaultAsync(t => t.tag == tagText);
+
+                        if (existingTag == null)
+                        {
+                            var newTag = new Tags 
+                            { 
+                                tag = tagText 
+                            };
+                            _context.tags.Add(newTag);
+                            await _context.SaveChangesAsync();
+
+                            var threadTag = new ThreadTags
+                            {
+                                id_thread = thread.id,
+                                id_tag = newTag.id
+                            };
+
+                            _context.thread_tags.Add(threadTag);
+                        }
+                        else
+                        {
+                            var threadTag = new ThreadTags
+                            {
+                                id_thread = thread.id,
+                                id_tag = existingTag.id
+                            };
+
+                            _context.thread_tags.Add(threadTag);
+                        }
+
+                        await _context.SaveChangesAsync();
+                    }
+                }
 
                 if (model.files != null && model.files.Count > 0)
                 {
@@ -109,6 +160,16 @@ namespace MiCo.Services
         public static bool IsValidTitle(string title)
         {
             return Regex.IsMatch(title, @"[@#*/\\;]");
+        }
+
+        /// <summary>
+        /// Method used to check if tags are valid
+        /// </summary>
+        /// <param name="tags">String passing tags</param>
+        /// <returns>True if valid else false</returns>
+        public static bool IsValidTags(string tags)
+        {
+            return Regex.IsMatch(tags, @"^[a-zA-Z0-9]+$");
         }
     }
 }
