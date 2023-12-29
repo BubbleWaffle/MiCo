@@ -17,7 +17,11 @@ namespace MiCo.Services
             _context = context;
         }
 
-        /* Adding new user to database */
+        /// <summary>
+        /// Method used to register user
+        /// </summary>
+        /// <param name="model">View model passing registration data</param>
+        /// <returns>Helper reporting success or error</returns>
         public async Task<ResultHelper> RegisterUser(RegistrationViewModel model)
         {
             /* Validation */
@@ -48,9 +52,8 @@ namespace MiCo.Services
             if (model.confirm_password != model.password)
                 return new ResultHelper(false, "Password does not match!");
 
-            var hashedPassword = HashPassword(model.password); //Hash password
+            var hashedPassword = HashPassword(model.password);
 
-            /* Creating user object */
             var newUser = new Users
             {
                 nickname = model.login,
@@ -62,13 +65,17 @@ namespace MiCo.Services
                 status = 0
             };
 
-            _context.users.Add(newUser); //Add new user to database
+            _context.users.Add(newUser);
             await _context.SaveChangesAsync();
 
             return new ResultHelper(true, "Your account has been registered, now you can log in!");
         }
 
-        /* Method helping with email validation */
+        /// <summary>
+        /// Method used to check if email is valid
+        /// </summary>
+        /// <param name="email">String passing email</param>
+        /// <returns>True if matches else false</returns>
         private bool IsValidEmail(string email)
         {
             return Regex.IsMatch(email,
@@ -76,13 +83,21 @@ namespace MiCo.Services
                 RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
         }
 
-        /* Method helping with login validation */
+        /// <summary>
+        /// Method used to check if login is valid
+        /// </summary>
+        /// <param name="login">String passing login</param>
+        /// <returns>True if matches else false</returns>
         private bool IsValidLogin(string login)
         {
             return Regex.IsMatch(login, "^[a-zA-Z0-9]+$");
         }
 
-        /* Method helping with password validation */
+        /// <summary>
+        /// Method used to check if password is valid
+        /// </summary>
+        /// <param name="password">String passing password</param>
+        /// <returns>True if valid else false</returns>
         private bool IsValidPassword(string password)
         {
             return password.Any(char.IsUpper) &&
@@ -90,7 +105,11 @@ namespace MiCo.Services
                    password.Any(ch => !char.IsLetterOrDigit(ch));
         }
 
-        /* Method hashing password */
+        /// <summary>
+        /// Method used to hash password
+        /// </summary>
+        /// <param name="password">String passing password to hash</param>
+        /// <returns>Hashed password to string</returns>
         private string HashPassword(string password)
         {
             byte[] salt = new byte[16];

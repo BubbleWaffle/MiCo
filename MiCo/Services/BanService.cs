@@ -14,9 +14,16 @@ namespace MiCo.Services
             _context = context;
         }
 
+        /// <summary>
+        /// Method used to ban users
+        /// </summary>
+        /// <param name="banned_user">Banned user</param>
+        /// <param name="id_moderator">Moderator who banned user</param>
+        /// <param name="model">View model passing ban data</param>
+        /// <returns>Helper reporting success or error</returns>
         public async Task<ResultHelper> JusticeBan(Users banned_user, int? id_moderator, BanViewModel model)
         {
-            int non_nullable_id = id_moderator ?? default(int); //Convert nullable int value to non-nullable
+            int non_nullable_id = id_moderator ?? default(int); // Convert nullable int value to non-nullable
 
             if (string.IsNullOrWhiteSpace(model.reason))
                 return new ResultHelper(false, "You have to enter reason!");
@@ -32,11 +39,9 @@ namespace MiCo.Services
             if (existing_ban != null)
                 return new ResultHelper(false, "User is already banned!");
 
-            /* Remove all reports for the banned user */
             var reportsToDelete = _context.reports.Where(r => r.id_reported_user == banned_user.id);
             _context.reports.RemoveRange(reportsToDelete);
 
-            /* Creat report object */
             var newBan = new Bans
             {
                 id_banned_user = banned_user.id,

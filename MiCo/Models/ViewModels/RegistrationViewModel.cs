@@ -6,18 +6,18 @@ namespace MiCo.Models.ViewModels
     {
         [Required]
         [DataType(DataType.EmailAddress)]
-        public string? email { get; set; }
+        public string email { get; set; } = null!;
 
         [Required]
         [DataType (DataType.Text)]
-        public string? login { get; set; }
+        public string login { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Password)]
-        public string? password { get; set; }
+        public string password { get; set; } = null!;
 
         [Required]
         [DataType(DataType.Password)]
-        public string? confirm_password { get; set; }
+        public string confirm_password { get; set; } = null!;
     }
 }

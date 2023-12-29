@@ -16,7 +16,12 @@ namespace MiCo.Services
             _contextAccessor = contextAccessor;
         }
 
-        /* Delete logged user */
+        /// <summary>
+        /// Method used to delete profile
+        /// </summary>
+        /// <param name="id">Id currently logged user</param>
+        /// <param name="model">View model passing delete data</param>
+        /// <returns>Helper reporting success or error</returns>
         public async Task<ResultHelper> ProfileDelete(int? id, ProfileDeleteViewModel model)
         {
             var user = _context.users.FirstOrDefault(u => u.id == id);
@@ -36,7 +41,12 @@ namespace MiCo.Services
             return new ResultHelper(false, "Incorrect password!");
         }
 
-        /* Password validation method */
+        /// <summary>
+        /// Method used  to verify password
+        /// </summary>
+        /// <param name="enteredPassword">Password entered during login process</param>
+        /// <param name="storedHashedPassword">Password saved in database</param>
+        /// <returns>False if passwords don't match else true</returns>
         private bool VerifyPassword(string enteredPassword, string storedHashedPassword)
         {
             byte[] hashWithSaltBytes = Convert.FromBase64String(storedHashedPassword);

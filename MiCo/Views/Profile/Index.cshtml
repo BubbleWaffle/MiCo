@@ -58,7 +58,7 @@
             </div>
             @if (Model.login == Context.Session.GetString("Login"))
             {
-                <button type="button" class="btn btn-mico btn-sm mb-2"><i class="bi bi-plus-circle"></i> Creat new topic</button>
+                <a type="button" class="btn btn-mico btn-sm mb-2" asp-controller="Thread" asp-action="Create"><i class="bi bi-plus-circle"></i> Creat new topic</a>
             }
             <ul class="list-unstyled">
                 <li class="media border d-flex align-items-center p-2">

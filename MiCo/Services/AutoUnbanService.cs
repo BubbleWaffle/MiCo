@@ -12,7 +12,7 @@
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(15)); //Call every 15 minutes
+            _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMinutes(15)); // Call every 15 minutes
             return Task.CompletedTask;
         }
 
@@ -21,14 +21,14 @@
             using (var scope = _serviceProvider.CreateScope())
             {
                 var banService = scope.ServiceProvider.GetRequiredService<UnbanService>();
-                banService.Unban(); //Call Unban method from UnbanService
+                banService.Unban(); // Call Unban method from UnbanService
             }
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _timer?.Change(Timeout.Infinite, 0);
-            _timer?.Change(TimeSpan.Zero, TimeSpan.FromMinutes(15));
+            _timer?.Change(TimeSpan.Zero, TimeSpan.FromMinutes(15)); // Reset timer
             return Task.CompletedTask;
         }
 

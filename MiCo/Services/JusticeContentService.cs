@@ -13,6 +13,10 @@ namespace MiCo.Services
             _context = context;
         }
 
+        /// <summary>
+        /// Method used to load content to justice page
+        /// </summary>
+        /// <returns>JusticeViewModel with data</returns>
         public async Task<JusticeViewModel> JusticeContent()
         {
             var justiceViewModel = new JusticeViewModel
@@ -22,6 +26,7 @@ namespace MiCo.Services
                     .Include(r => r.reporting_user)
                     .OrderBy(r => r.report_date)
                     .ToListAsync(),
+
                 _bans = await _context.bans
                     .Include(b => b.banned_user)
                     .Include(b => b.moderator)

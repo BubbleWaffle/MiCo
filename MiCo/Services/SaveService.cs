@@ -12,6 +12,11 @@ namespace MiCo.Services
             _context = context;
         }
 
+        /// <summary>
+        /// Method used to cancel report by removing from the database
+        /// </summary>
+        /// <param name="id">User account id passing by URL</param>
+        /// <returns>Helper reporting success or error</returns>
         public async Task<ResultHelper> JusticeSave(int id)
         {
             var reportToRemove = await _context.reports.FindAsync(id);

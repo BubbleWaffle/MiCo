@@ -12,20 +12,20 @@ namespace MiCo.Services
             _context = context;
         }
 
-        /* Fill profile with data */
+        /// <summary>
+        /// Method used to load content to specific profile
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <returns>ProfileContentViewModel with data</returns>
         public Task<ProfileContentViewModel> ProfileContent(string? login)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
-            /* If user doesn't exist return empty view */
             if (user == null)
-            {
                 return Task.FromResult(new ProfileContentViewModel());
-            }
 
             string pfp_url = user.pfp ?? "../content/default/pfp_default.svg";
 
-            /* Create Profile object */
             var profileContentViewModel = new ProfileContentViewModel
             {
                 nickname = user.nickname,

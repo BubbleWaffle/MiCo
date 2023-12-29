@@ -22,7 +22,13 @@ namespace MiCo.Services
             _hostEnvironment = hostEnvironment;
         }
 
-        /* Edit existing user */
+        /// <summary>
+        /// Method used to edit user data
+        /// </summary>
+        /// <param name="id">Id currently logged user</param>
+        /// <param name="model">View model passing edit data</param>
+        /// <param name="delete_pfp">True if delete avatar else leave or change</param>
+        /// <returns>Helper reporting success or error</returns>
         public async Task<ResultHelper> ProfileEdit(int? id, ProfileEditViewModel model, bool delete_pfp)
         {
             var user = _context.users.FirstOrDefault(u => u.id == id);
@@ -53,19 +59,25 @@ namespace MiCo.Services
                     if (model.file.Length > 15728640)
                         return new ResultHelper(false, "Image is too big (MAX 15MB)!");
 
-                    string uniqueFileName = $"{id}.{Path.GetExtension(model.file.FileName)}"; //Use user id as file name
+                    string baseFileName = $"{id}";
 
-                    string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "pfp"); //Path to folder with avatars
+                    string uniqueFileName = $"{id}.{Path.GetExtension(model.file.FileName)}";
 
-                    string filePath = Path.Combine(uploadsFolder, uniqueFileName); //Full path with file name
+                    string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "pfp");
 
-                    /* Save file */
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    foreach (var fileToDelete in Directory.GetFiles(uploadsFolder, $"{baseFileName}.*"))
+                    {
+                        File.Delete(fileToDelete);
+                    }
+
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
                         await model.file.CopyToAsync(fileStream);
                     }
 
-                    user.pfp = $"../content/pfp/{uniqueFileName}"; //Update path in database
+                    user.pfp = $"../content/pfp/{uniqueFileName}";
                 }
 
                 if (delete_pfp) user.pfp = null;
@@ -90,7 +102,7 @@ namespace MiCo.Services
                     if (!VerifyPassword(model.old_password, user.password))
                         return new ResultHelper(false, "Incorrect password!");
 
-                    var hashedPassword = HashPassword(model.new_password); //Hash password
+                    var hashedPassword = HashPassword(model.new_password);
 
                     user.password = hashedPassword;
                 }
@@ -106,13 +118,21 @@ namespace MiCo.Services
             return new ResultHelper(false, "Something went wrong!");
         }
 
-        /* Method helping with login validation */
+        /// <summary>
+        /// Method used to check if login and/or nickname is valid
+        /// </summary>
+        /// <param name="login_or_nickname">String passing login and/or nickname</param>
+        /// <returns>True if matches else false</returns>
         private bool IsValidLoginOrNickname(string login_or_nickname)
         {
             return Regex.IsMatch(login_or_nickname, "^[a-zA-Z0-9]+$");
         }
 
-        /* Method helping with password validation */
+        /// <summary>
+        /// Method used to check if password is valid
+        /// </summary>
+        /// <param name="password">String passing password</param>
+        /// <returns>True if valid else false</returns>
         private bool IsValidPassword(string password)
         {
             return password.Any(char.IsUpper) &&
@@ -120,7 +140,11 @@ namespace MiCo.Services
                    password.Any(ch => !char.IsLetterOrDigit(ch));
         }
 
-        /* Method hashing password */
+        /// <summary>
+        /// Method used to hash password
+        /// </summary>
+        /// <param name="password">String passing password to hash</param>
+        /// <returns>Hashed password to string</returns>
         private string HashPassword(string password)
         {
             byte[] salt = new byte[16];
@@ -140,7 +164,12 @@ namespace MiCo.Services
             return Convert.ToBase64String(hashWithSalt);
         }
 
-        /* Password validation method */
+        /// <summary>
+        /// Method used  to verify password
+        /// </summary>
+        /// <param name="enteredPassword">Password entered during login process</param>
+        /// <param name="storedHashedPassword">Password saved in database</param>
+        /// <returns>False if passwords don't match else true</returns>
         private bool VerifyPassword(string enteredPassword, string storedHashedPassword)
         {
             byte[] hashWithSaltBytes = Convert.FromBase64String(storedHashedPassword);
@@ -160,7 +189,10 @@ namespace MiCo.Services
             return true;
         }
 
-        /* Update session method */
+        /// <summary>
+        /// Method used to update current logged user session
+        /// </summary>
+        /// <param name="user">Users object with new data</param>
         private void UpdateSession(Users user)
         {
             _contextAccessor.HttpContext?.Session.SetString("Nickname", user.nickname);

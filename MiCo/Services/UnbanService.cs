@@ -13,6 +13,11 @@ namespace MiCo.Services
             _context = context;
         }
 
+        /// <summary>
+        /// Method used to unban users manually
+        /// </summary>
+        /// <param name="id">Users id to unban</param>
+        /// <returns>Helper reporting success or error</returns>
         public async Task<ResultHelper> JusticeUnban(int id)
         {
             var user = await _context.users.FindAsync(id);
@@ -37,7 +42,9 @@ namespace MiCo.Services
             return new ResultHelper(false, "This user doesn't exist!");
         }
 
-        /* Method unbanning users */
+        /// <summary>
+        /// Method used in AutoUnbanService (HostedService) to automatic unban users
+        /// </summary>
         public void Unban()
         {
             var now = DateTimeOffset.Now;

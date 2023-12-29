@@ -14,6 +14,13 @@ namespace MiCo.Services
             _context = context;
         }
 
+        /// <summary>
+        /// Method used to report specific user
+        /// </summary>
+        /// <param name="id_reported_user">Id reported user</param>
+        /// <param name="id_reporting_user">Id reporting user (currently logged user)</param>
+        /// <param name="model">View model passing report data</param>
+        /// <returns>Helper reporting success or error</returns>
         public async Task<ResultHelper> ProfileReport(int id_reported_user, int? id_reporting_user, ProfileReportViewModel model)
         {
             int non_nullable_id = id_reporting_user ?? default(int); //Convert nullable int value to non-nullable
@@ -32,7 +39,6 @@ namespace MiCo.Services
             if (model.reason.Length > 300)
                 return new ResultHelper(false, "Your reason is too long!");
 
-            /* Creat report object */
             var newReport = new Reports
             {
                 id_reported_user = id_reported_user,

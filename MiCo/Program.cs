@@ -30,6 +30,7 @@ builder.Services.AddScoped<BanService>();
 builder.Services.AddScoped<UnbanService>();
 builder.Services.AddScoped<JusticeContentService>();
 builder.Services.AddScoped<SaveService>();
+builder.Services.AddScoped<ThreadCreateService>();
 
 /* Add hosted services */
 builder.Services.AddHostedService<AutoUnbanService>();
