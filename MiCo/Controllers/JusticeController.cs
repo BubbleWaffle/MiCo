@@ -94,7 +94,11 @@ namespace MiCo.Controllers
             return View(model);
         }
 
-        /* Specific user to save */
+        /// <summary>
+        /// Method used to render specific user save view
+        /// </summary>
+        /// <param name="id">User account id passing by URL</param>
+        /// <returns>Specific user save view or redirect to Home view</returns>
         [HttpGet("/Justice/Save={id}")]
         public IActionResult Save([FromRoute(Name = "id")] int id)
         {
@@ -115,6 +119,12 @@ namespace MiCo.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Method used to cancel specific report
+        /// </summary>
+        /// <param name="id">User account id passing by URL</param>
+        /// <param name="model">View model passing... something to do nothing</param>
+        /// <returns>Returns only Justice main view</returns>
         [HttpPost("/Justice/Save={id}")]
         public async Task<IActionResult> Save([FromRoute(Name = "id")] int id, SaveViewModel model)
         {
@@ -130,7 +140,11 @@ namespace MiCo.Controllers
             return View(model);
         }
 
-        /* Specific user to unban */
+        /// <summary>
+        /// Method used to render specific user unban view
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <returns>Specific user unban view or redirect to Home view</returns>
         [HttpGet("/Justice/Unban={login}")]
         public IActionResult Unban([FromRoute(Name = "login")] string login)
         {
@@ -145,6 +159,12 @@ namespace MiCo.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Method used to unban specific user
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <param name="model">View model passing... something to do nothing</param>
+        /// <returns>Returns only Justice main view</returns>
         [HttpPost("/Justice/Unban={login}")]
         public async Task<IActionResult> Unban([FromRoute(Name = "login")] string login, UnbanViewModel model)
         {
