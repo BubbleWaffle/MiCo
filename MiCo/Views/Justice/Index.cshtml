@@ -26,13 +26,13 @@
                     {
                         <tr>
                             <th scope="row" class="border">@index</th>
-                            <td class="border">@report.reported_user.login</td>
-                            <td class="border">@report.reporting_user.login</td>
+                            <td class="border"><a class="text-decoration-none" asp-controller="Profile" asp-action="Index" asp-route-login="@report.reported_user.login">@report.reported_user.login</a></td>
+                            <td class="border"><a class="text-decoration-none" asp-controller="Profile" asp-action="Index" asp-route-login="@report.reporting_user.login">@report.reporting_user.login</a></td>
                             <td class="border">@report.reason</td>
                             <td class="border">@report.report_date.ToString("dd/MM/yyyy")</td>
                             <td class="border">
-                                <a type="button" class="btn btn-success btn-sm mt-1" asp-controller="Justice" asp-action="Save=@report.id">Save!</a>
-                                <a type="button" class="btn btn-danger btn-sm mt-1" asp-controller="Justice" asp-action="Ban=@report.reported_user.login">Ban!</a>
+                                <a type="button" class="btn btn-success btn-sm" asp-controller="Justice" asp-action="Save=@report.id">Save!</a>
+                                <a type="button" class="btn btn-danger btn-sm" asp-controller="Justice" asp-action="Ban=@report.reported_user.login">Ban!</a>
                             </td>
                         </tr>
                         index++;
@@ -64,7 +64,7 @@
                         <tr>
                             <th scope="row" class="border">@index</th>
                             <td class="border">@ban.banned_user.login</td>
-                            <td class="border">@ban.moderator.login</td>
+                            <td class="border"><a class="text-decoration-none" asp-controller="Profile" asp-action="Index" asp-route-login="@ban.moderator.login">@ban.moderator.login</a></td>
                             <td class="border">@ban.reason</td>
                             <td>@ban.ban_date.ToString("dd/MM/yyyy")</td>
                             @if (ban.ban_until == null)
@@ -87,7 +87,10 @@
 
         @if (!Model._reports.Any() && !Model._bans.Any())
         {
-            <h1 class="text-mico">MiCo world is clean! There is nothing to do! <i class="bi bi-emoji-dizzy-fill"></i></h1>
+            <h1 class="text-mico text-center">MiCo world is clean! There is nothing to do! <i class="bi bi-emoji-dizzy-fill"></i></h1>
+            <div class="col d-flex justify-content-center">
+                <a type="button" class="btn btn-mico btn-sm mt-3" asp-controller="Home" asp-action="Index">Go to home page!</a>
+            </div>
         }
 
     </div>

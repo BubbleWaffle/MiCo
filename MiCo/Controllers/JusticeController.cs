@@ -136,6 +136,10 @@ namespace MiCo.Controllers
                 {
                     return RedirectToAction("Index", "Justice");
                 }
+                else
+                {
+                    ViewBag.error = result.RHmessage;
+                }
             }
             return View(model);
         }
@@ -178,6 +182,10 @@ namespace MiCo.Controllers
             if (result.RHsuccess)
             {
                 return RedirectToAction("Index", "Justice");
+            }
+            else
+            {
+                ViewBag.error = result.RHmessage;
             }
 
             return View(model);

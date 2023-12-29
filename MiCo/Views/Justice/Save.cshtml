@@ -14,6 +14,12 @@
                 <button type="submit" class="btn btn-success btn-sm ms-1">Save him!</button>
             </div>
         </form>
+        @if (ViewBag.error != null)
+        {
+            <div class="d-flex justify-content-center mt-3 text-danger">
+                <i class="bi bi-check2-circle"></i> @ViewBag.error
+            </div>
+        }
 
     </div>
 </div>
