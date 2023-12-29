@@ -1,5 +1,6 @@
 ﻿using MiCo.Data;
 using MiCo.Helpers;
+using MiCo.Models.ViewModels;
 using System.Security.Cryptography;
 
 namespace MiCo.Services
@@ -16,11 +17,11 @@ namespace MiCo.Services
         }
 
         /* Delete logged user */
-        public async Task<ResultHelper> ProfileDelete(int? id, string password)
+        public async Task<ResultHelper> ProfileDelete(int? id, ProfileDeleteViewModel model)
         {
             var user = _context.users.FirstOrDefault(u => u.id == id);
 
-            if (user != null && VerifyPassword(password, user.password) && !string.IsNullOrWhiteSpace(password))
+            if (user != null && VerifyPassword(model.password, user.password) && !string.IsNullOrWhiteSpace(model.password))
             {
                 user.status = -1;
 

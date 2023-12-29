@@ -1,6 +1,7 @@
 ﻿using MiCo.Data;
 using MiCo.Helpers;
 using MiCo.Models;
+using MiCo.Models.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
@@ -22,37 +23,37 @@ namespace MiCo.Services
         }
 
         /* Edit existing user */
-        public async Task<ResultHelper> ProfileEdit(int? id, string? nickname, string? login, IFormFile? file, bool delete_pfp, string? old_password, string? new_password, string? confirm_password)
+        public async Task<ResultHelper> ProfileEdit(int? id, ProfileEditViewModel model, bool delete_pfp)
         {
             var user = _context.users.FirstOrDefault(u => u.id == id);
 
             if (user != null)
             {
-                if (string.IsNullOrWhiteSpace(old_password))
+                if (string.IsNullOrWhiteSpace(model.old_password))
                     return new ResultHelper(false, "Please enter your current password!");
 
-                if (!string.IsNullOrWhiteSpace(nickname) && IsValidLoginOrNickname(nickname)) user.nickname = nickname;
+                if (!string.IsNullOrWhiteSpace(model.nickname) && IsValidLoginOrNickname(model.nickname)) user.nickname = model.nickname;
 
-                if (!string.IsNullOrWhiteSpace(login))
+                if (!string.IsNullOrWhiteSpace(model.login))
                 {
-                    if (login.Length < 4 || login.Length > 14)
+                    if (model.login.Length < 4 || model.login.Length > 14)
                         return new ResultHelper(false, "Login is too short or too long (min 4 characters, max 14 characters)!");
 
-                    if (!IsValidLoginOrNickname(login))
+                    if (!IsValidLoginOrNickname(model.login))
                         return new ResultHelper(false, "Invalid login!");
 
-                    if (_context.users.Any(u => u.login == login))
+                    if (_context.users.Any(u => u.login == model.login))
                         return new ResultHelper(false, "Provided login is already in use or is the same as current!");
 
-                    user.login = login;
+                    user.login = model.login;
                 }
 
-                if (file != null && file.Length > 0)
+                if (model.file != null && model.file.Length > 0)
                 {
-                    if (file.Length > 15728640)
+                    if (model.file.Length > 15728640)
                         return new ResultHelper(false, "Image is too big (MAX 15MB)!");
 
-                    string uniqueFileName = $"{id}.{Path.GetExtension(file.FileName)}"; //Use user id as file name
+                    string uniqueFileName = $"{id}.{Path.GetExtension(model.file.FileName)}"; //Use user id as file name
 
                     string uploadsFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "pfp"); //Path to folder with avatars
 
@@ -61,7 +62,7 @@ namespace MiCo.Services
                     /* Save file */
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {
-                        await file.CopyToAsync(fileStream);
+                        await model.file.CopyToAsync(fileStream);
                     }
 
                     user.pfp = $"../content/pfp/{uniqueFileName}"; //Update path in database
@@ -69,27 +70,27 @@ namespace MiCo.Services
 
                 if (delete_pfp) user.pfp = null;
 
-                if (!string.IsNullOrWhiteSpace(new_password))
+                if (!string.IsNullOrWhiteSpace(model.new_password))
                 {
-                    if (string.IsNullOrWhiteSpace(confirm_password))
+                    if (string.IsNullOrWhiteSpace(model.confirm_password))
                         return new ResultHelper(false, "You have to confirm your new password!");
 
-                    if (!IsValidPassword(new_password))
+                    if (!IsValidPassword(model.new_password))
                         return new ResultHelper(false, "Password must contain special characters and numbers!");
 
-                    if (new_password.Length < 8)
+                    if (model.new_password.Length < 8)
                         return new ResultHelper(false, "Password is too short (min 8 characters)!");
 
-                    if (confirm_password != new_password)
+                    if (model.confirm_password != model.new_password)
                         return new ResultHelper(false, "New password does not match!");
 
-                    if (old_password == new_password)
+                    if (model.old_password == model.new_password)
                         return new ResultHelper(false, "New password cannot be the same as the old one!");
 
-                    if (!VerifyPassword(old_password, user.password))
+                    if (!VerifyPassword(model.old_password, user.password))
                         return new ResultHelper(false, "Incorrect password!");
 
-                    var hashedPassword = HashPassword(new_password); //Hash password
+                    var hashedPassword = HashPassword(model.new_password); //Hash password
 
                     user.password = hashedPassword;
                 }

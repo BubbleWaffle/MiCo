@@ -4,6 +4,7 @@ using MiCo.Helpers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using MiCo.Models.ViewModels;
 
 namespace MiCo.Services
 {
@@ -17,45 +18,45 @@ namespace MiCo.Services
         }
 
         /* Adding new user to database */
-        public async Task<ResultHelper> RegisterUser(string? email, string? login, string? password, string? confirm_password)
+        public async Task<ResultHelper> RegisterUser(RegistrationViewModel model)
         {
             /* Validation */
-            if (string.IsNullOrWhiteSpace(email) || !IsValidEmail(email))
+            if (string.IsNullOrWhiteSpace(model.email) || !IsValidEmail(model.email))
                 return new ResultHelper(false, "Invalid email address!");
 
-            if (_context.users.Any(u => u.email == email))
+            if (_context.users.Any(u => u.email == model.email))
                 return new ResultHelper(false, "Provided email is already in use!");
 
-            if (string.IsNullOrWhiteSpace(login) || !IsValidLogin(login))
+            if (string.IsNullOrWhiteSpace(model.login) || !IsValidLogin(model.login))
                 return new ResultHelper(false, "Invalid login!");
 
-            if (login.Length < 4 || login.Length > 14)
+            if (model.login.Length < 4 || model.login.Length > 14)
                 return new ResultHelper(false, "Login is too short or too long (min 4 characters, max 14 characters)!");
 
-            if (_context.users.Any(u => u.login == login))
+            if (_context.users.Any(u => u.login == model.login))
                 return new ResultHelper(false, "Provided login is already in use!");
 
-            if (string.IsNullOrWhiteSpace(password) || !IsValidPassword(password))
+            if (string.IsNullOrWhiteSpace(model.password) || !IsValidPassword(model.password))
                 return new ResultHelper(false, "Password must contain special characters and numbers!");
 
-            if (password.Length < 8)
+            if (model.password.Length < 8)
                 return new ResultHelper(false, "Password is too short (min 8 characters)!");
 
-            if (string.IsNullOrWhiteSpace(confirm_password))
+            if (string.IsNullOrWhiteSpace(model.confirm_password))
                 return new ResultHelper(false, "You need to confirm password!");
 
-            if (confirm_password != password)
+            if (model.confirm_password != model.password)
                 return new ResultHelper(false, "Password does not match!");
 
-            var hashedPassword = HashPassword(password); //Hash password
+            var hashedPassword = HashPassword(model.password); //Hash password
 
             /* Creating user object */
             var newUser = new Users
             {
-                nickname = login,
-                login = login,
+                nickname = model.login,
+                login = model.login,
                 password = hashedPassword,
-                email = email,
+                email = model.email,
                 creation_date = DateTimeOffset.Now,
                 role = 0,
                 status = 0

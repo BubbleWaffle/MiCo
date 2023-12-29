@@ -8,32 +8,48 @@ namespace MiCo.Controllers
     public class JusticeController : Controller
     {
         private readonly MiCoDbContext _context;
-        private readonly JusticeContentService _contentService;
+        private readonly JusticeContentService _justiceContentService;
         private readonly BanService _banService;
         private readonly SaveService _saveService;
         private readonly UnbanService _unbanService;
 
-        public JusticeController(MiCoDbContext context, JusticeContentService contentService, BanService banService, SaveService saveService, UnbanService unbanService)
+        /// <summary>
+        /// Justice controller with methods used to ban, cancel reports or unban users
+        /// </summary>
+        /// <param name="context">Database context</param>
+        /// <param name="justiceContentService">Load justice content service</param>
+        /// <param name="banService">Ban service</param>
+        /// <param name="saveService">Cancel report service</param>
+        /// <param name="unbanService">Unban service</param>
+        public JusticeController(MiCoDbContext context, JusticeContentService justiceContentService, BanService banService, SaveService saveService, UnbanService unbanService)
         {
             _context = context;
-            _contentService = contentService;
+            _justiceContentService = justiceContentService;
             _banService = banService;
             _saveService = saveService;
             _unbanService = unbanService;
         }
 
+        /// <summary>
+        /// Method used to render main justice view
+        /// </summary>
+        /// <returns>Justice view or redirect to Home view</returns>
         [Route("/Justice/Index")]
         public async Task<IActionResult> Index()
         {
             if (!HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetInt32("Role") != 1 )
                 return RedirectToAction("Index", "Home");
 
-            var result = await _contentService.JusticeContent();
+            var result = await _justiceContentService.JusticeContent();
 
             return View(result);
         }
 
-        /* Specific user to ban */
+        /// <summary>
+        /// Method used to render specific user ban view
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <returns>Specific user ban view or redirect to Home view</returns>
         [HttpGet("/Justice/Ban={login}")]
         public IActionResult Ban([FromRoute(Name = "login")] string login)
         {
@@ -48,6 +64,12 @@ namespace MiCo.Controllers
             return View();
         }
 
+        /// <summary>
+        /// Method used to ban specific user
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <param name="model">View model passing ban data to service</param>
+        /// <returns>Specific user ban view with error, success or redirect to Home view</returns>
         [HttpPost("/Justice/Ban={login}")]
         public async Task<IActionResult> Ban([FromRoute(Name = "login")] string login, BanViewModel model)
         {
@@ -56,7 +78,7 @@ namespace MiCo.Controllers
             if (user == null || !HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetInt32("UserId") == user.id || HttpContext.Session.GetInt32("Role") != 1)
                 return RedirectToAction("Index", "Home");
 
-            var result = await _banService.JusticeBan(user, HttpContext.Session.GetInt32("UserId"), model.reason, model.ban_until);
+            var result = await _banService.JusticeBan(user, HttpContext.Session.GetInt32("UserId"), model);
 
             if (result.RHsuccess)
             {

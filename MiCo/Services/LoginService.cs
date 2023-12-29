@@ -1,5 +1,6 @@
 ﻿using MiCo.Data;
 using MiCo.Helpers;
+using MiCo.Models.ViewModels;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -17,16 +18,16 @@ namespace MiCo.Services
         }
 
         /* Check if user exist and create session */
-        public ResultHelper LoginUser(string? emailOrLogin, string? password)
+        public ResultHelper LoginUser(LoginViewModel model)
         {
             /* Validation */
-            if (string.IsNullOrWhiteSpace(emailOrLogin) || string.IsNullOrWhiteSpace(password))
+            if (string.IsNullOrWhiteSpace(model.email_or_login) || string.IsNullOrWhiteSpace(model.password))
                 return new ResultHelper(false, "Fill all fields!");
 
-            var user = _context.users.FirstOrDefault(u => u.email == emailOrLogin || u.login == emailOrLogin);
+            var user = _context.users.FirstOrDefault(u => u.email == model.email_or_login || u.login == model.email_or_login);
 
             /* If email or login and password are correct create session */
-            if (user != null && VerifyPassword(password, user.password) && user.status != -1 && user.status != 1)
+            if (user != null && VerifyPassword(model.password, user.password) && user.status != -1 && user.status != 1)
             {
                 _contextAccessor.HttpContext?.Session.SetInt32("UserId", user.id);
                 _contextAccessor.HttpContext?.Session.SetString("Nickname", user.nickname);

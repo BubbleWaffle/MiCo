@@ -1,6 +1,7 @@
 ﻿using MiCo.Data;
 using MiCo.Helpers;
 using MiCo.Models;
+using MiCo.Models.ViewModels;
 
 namespace MiCo.Services
 {
@@ -13,7 +14,7 @@ namespace MiCo.Services
             _context = context;
         }
 
-        public async Task<ResultHelper> ProfileReport(int id_reported_user, int? id_reporting_user, string reason)
+        public async Task<ResultHelper> ProfileReport(int id_reported_user, int? id_reporting_user, ProfileReportViewModel model)
         {
             int non_nullable_id = id_reporting_user ?? default(int); //Convert nullable int value to non-nullable
 
@@ -25,10 +26,10 @@ namespace MiCo.Services
             if (existing_report != null)
                 return new ResultHelper(false, "You have recently reported this user! Take a break.");
 
-            if (string.IsNullOrWhiteSpace(reason))
+            if (string.IsNullOrWhiteSpace(model.reason))
                 return new ResultHelper(false, "You have to enter reason!");
 
-            if (reason.Length > 300)
+            if (model.reason.Length > 300)
                 return new ResultHelper(false, "Your reason is too long!");
 
             /* Creat report object */
@@ -36,7 +37,7 @@ namespace MiCo.Services
             {
                 id_reported_user = id_reported_user,
                 id_reporting_user = non_nullable_id,
-                reason = reason,
+                reason = model.reason,
                 report_date = DateTimeOffset.Now
             };
 

@@ -13,6 +13,14 @@ namespace MiCo.Controllers
         private readonly ProfileReportService _profileReportService;
         private readonly ProfileDeleteService _profileDeleteService;
 
+        /// <summary>
+        /// Profile controller with methods used to load content, edit, report and delete account
+        /// </summary>
+        /// <param name="context">Database context</param>
+        /// <param name="profileContentService">Load profile content service</param>
+        /// <param name="profileEditService">Edit profile content service</param>
+        /// <param name="profileReportService">Report profile content service</param>
+        /// <param name="profileDeleteService">Delete profile content service</param>
         public ProfileController(MiCoDbContext context, ProfileContentService profileContentService, ProfileEditService profileEditService, ProfileReportService profileReportService, ProfileDeleteService profileDeleteService)
         {
             _context = context;
@@ -22,7 +30,11 @@ namespace MiCo.Controllers
             _profileDeleteService = profileDeleteService;
         }
 
-        /* Return view of specific profile */
+        /// <summary>
+        /// Method used to render specific profile view
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <returns>Profile view with content or redirect to Home view</returns>
         [HttpGet("{login}")]
         public async Task<IActionResult> Index([FromRoute(Name = "login")] string login)
         {
@@ -30,24 +42,29 @@ namespace MiCo.Controllers
 
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
-            /* If profile doesn't exist go to home page */
             if (result.login == null || user == null || user.status == -1 || user.status == 1)
                 return RedirectToAction("Index", "Home");
 
             return View(result);
         }
 
-        /* Edit access action */
+        /// <summary>
+        /// Method used to render edit view
+        /// </summary>
+        /// <returns>Edit view or redirect to Home view</returns>
         public IActionResult Edit()
         {
-            /* If not logged in block access */
             if (!HttpContext.Session.TryGetValue("UserId", out _))
                 return RedirectToAction("Index", "Home");
 
             return View();
         }
 
-        /* Edit profile action */
+        /// <summary>
+        /// Method used to edit profile
+        /// </summary>
+        /// <param name="model">View model passing edited data to service</param>
+        /// <returns>Edit view with error or redirect to specific profile view with success</returns>
         [HttpPost]
         public async Task<IActionResult> Edit(ProfileEditViewModel model)
         {
@@ -56,8 +73,7 @@ namespace MiCo.Controllers
                 /* Convert string to bool */
                 bool deletePfp = !string.IsNullOrEmpty(model.delete_pfp) && model.delete_pfp.ToLower() == "true";
 
-                var result = await _profileEditService.ProfileEdit(HttpContext.Session.GetInt32("UserId"), model.nickname,
-                    model.login, model.file, deletePfp, model.old_password, model.new_password, model.confirm_password);
+                var result = await _profileEditService.ProfileEdit(HttpContext.Session.GetInt32("UserId"), model, deletePfp);
 
                 if (result.RHsuccess)
                 {
@@ -71,13 +87,16 @@ namespace MiCo.Controllers
             return View(model);
         }
 
-        /* Report access action */
+        /// <summary>
+        /// Method used to render specific profile report view
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <returns>Report specific profile view or redirect to Home view</returns>
         [HttpGet("Report/{login}")]
         public IActionResult Report([FromRoute(Name = "login")] string login)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
-            /* If user doesn't exist return home page */
             if (user == null || !HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetInt32("UserId") == user.id || HttpContext.Session.GetInt32("Role") == 1 || user.status == -1 || user.status == 1)
                 return RedirectToAction("Index", "Home");
 
@@ -87,19 +106,23 @@ namespace MiCo.Controllers
             return View();
         }
 
-        /* Report profile action */
+        /// <summary>
+        /// Method used to report specific profile
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <param name="model">View model passing report data to service</param>
+        /// <returns>Report specific profile view with error, success or redirect to Home view</returns>
         [HttpPost("Report/{login}")]
         public async Task<IActionResult> Report([FromRoute(Name = "login")] string login, ProfileReportViewModel model)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
-            /* If user doesn't exist return home page */
             if (user == null || !HttpContext.Session.TryGetValue("UserId", out _) || HttpContext.Session.GetInt32("UserId") == user.id || HttpContext.Session.GetInt32("Role") == 1)
                 return RedirectToAction("Index", "Home");
 
             if (ModelState.IsValid)
             {
-                var result = await _profileReportService.ProfileReport(user.id, HttpContext.Session.GetInt32("UserId"), model.reason);
+                var result = await _profileReportService.ProfileReport(user.id, HttpContext.Session.GetInt32("UserId"), model);
 
                 if (result.RHsuccess)
                 {
@@ -115,7 +138,10 @@ namespace MiCo.Controllers
             return View(model);
         }
 
-        /* Delete access action */
+        /// <summary>
+        /// Method used to render delete profile view
+        /// </summary>
+        /// <returns>Delete profile view or redirect to Home view</returns>
         public IActionResult Delete()
         {
             /* If not logged in block access */
@@ -125,13 +151,17 @@ namespace MiCo.Controllers
             return View();
         }
 
-        /* Delete profile action */
+        /// <summary>
+        /// Method used to delete profile
+        /// </summary>
+        /// <param name="model">View model passing delete data to service</param>
+        /// <returns>Delete profile view with error or redirect to Home view with success</returns>
         [HttpPost]
         public async Task<IActionResult> Delete(ProfileDeleteViewModel model)
         {
             if (ModelState.IsValid)
             {
-                var result = await _profileDeleteService.ProfileDelete(HttpContext.Session.GetInt32("UserId"), model.password);
+                var result = await _profileDeleteService.ProfileDelete(HttpContext.Session.GetInt32("UserId"), model);
 
                 if (result.RHsuccess)
                 {

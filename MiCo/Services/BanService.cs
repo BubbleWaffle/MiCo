@@ -1,6 +1,7 @@
 ﻿using MiCo.Data;
 using MiCo.Helpers;
 using MiCo.Models;
+using MiCo.Models.ViewModels;
 
 namespace MiCo.Services
 {
@@ -13,20 +14,20 @@ namespace MiCo.Services
             _context = context;
         }
 
-        public async Task<ResultHelper> JusticeBan(Users banned_user, int? id_moderator, string reason, DateTimeOffset? ban_until)
+        public async Task<ResultHelper> JusticeBan(Users banned_user, int? id_moderator, BanViewModel model)
         {
             int non_nullable_id = id_moderator ?? default(int); //Convert nullable int value to non-nullable
 
-            if (string.IsNullOrWhiteSpace(reason))
+            if (string.IsNullOrWhiteSpace(model.reason))
                 return new ResultHelper(false, "You have to enter reason!");
 
-            if (reason.Length > 300)
+            if (model.reason.Length > 300)
                 return new ResultHelper(false, "Your reason is too long!");
 
-            if (ban_until <= DateTimeOffset.Now)
+            if (model.ban_until <= DateTimeOffset.Now)
                 return new ResultHelper(false, "Invalid date!");
 
-            var existing_ban = _context.bans.FirstOrDefault(b => b.id_banned_user == banned_user.id && b.ban_until > DateTimeOffset.Now);
+            var existing_ban = _context.bans.FirstOrDefault(b => b.id_banned_user == banned_user.id);
 
             if (existing_ban != null)
                 return new ResultHelper(false, "User is already banned!");
@@ -40,9 +41,9 @@ namespace MiCo.Services
             {
                 id_banned_user = banned_user.id,
                 id_moderator = non_nullable_id,
-                reason = reason,
+                reason = model.reason,
                 ban_date = DateTimeOffset.Now,
-                ban_until = ban_until
+                ban_until = model.ban_until
             };
 
             banned_user.status = 1;
