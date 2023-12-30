@@ -2,9 +2,6 @@
 using MiCo.Helpers;
 using MiCo.Models.ViewModels;
 using MiCo.Models;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
-using System.Text;
 
 namespace MiCo.Services
 {
@@ -27,13 +24,13 @@ namespace MiCo.Services
         public async Task<ResultHelper> RegisterUser(RegistrationViewModel model)
         {
             /* Validation */
-            if (string.IsNullOrWhiteSpace(model.email) || !IsValidEmail(model.email))
+            if (string.IsNullOrWhiteSpace(model.email) || !Utilities.Tools.IsValidEmail(model.email))
                 return new ResultHelper(false, "Invalid email address!");
 
             if (_context.users.Any(u => u.email == model.email))
                 return new ResultHelper(false, "Provided email is already in use!");
 
-            if (string.IsNullOrWhiteSpace(model.login) || !IsValidLogin(model.login))
+            if (string.IsNullOrWhiteSpace(model.login) || !Utilities.Tools.IsValidLoginOrNickname(model.login))
                 return new ResultHelper(false, "Invalid login!");
 
             if (model.login.Length < 4 || model.login.Length > 14)
@@ -42,7 +39,7 @@ namespace MiCo.Services
             if (_context.users.Any(u => u.login == model.login))
                 return new ResultHelper(false, "Provided login is already in use!");
 
-            if (string.IsNullOrWhiteSpace(model.password) || !IsValidPassword(model.password))
+            if (string.IsNullOrWhiteSpace(model.password) || !Utilities.Tools.IsValidPassword(model.password))
                 return new ResultHelper(false, "Password must contain special characters and numbers!");
 
             if (model.password.Length < 8)
@@ -54,7 +51,7 @@ namespace MiCo.Services
             if (model.confirm_password != model.password)
                 return new ResultHelper(false, "Password does not match!");
 
-            var hashedPassword = HashPassword(model.password);
+            var hashedPassword = Utilities.Tools.HashPassword(model.password);
 
             var newUser = new Users
             {
@@ -74,64 +71,6 @@ namespace MiCo.Services
         }
 
         /// <summary>
-        /// Method used to check if email is valid
-        /// </summary>
-        /// <param name="email">String passing email</param>
-        /// <returns>True if matches else false</returns>
-        private bool IsValidEmail(string email)
-        {
-            return Regex.IsMatch(email,
-                @"^(?!\.)[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$",
-                RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250));
-        }
-
-        /// <summary>
-        /// Method used to check if login is valid
-        /// </summary>
-        /// <param name="login">String passing login</param>
-        /// <returns>True if matches else false</returns>
-        private bool IsValidLogin(string login)
-        {
-            return Regex.IsMatch(login, "^[a-zA-Z0-9]+$");
-        }
-
-        /// <summary>
-        /// Method used to check if password is valid
-        /// </summary>
-        /// <param name="password">String passing password</param>
-        /// <returns>True if valid else false</returns>
-        private bool IsValidPassword(string password)
-        {
-            return password.Any(char.IsUpper) &&
-                   password.Any(char.IsDigit) &&
-                   password.Any(ch => !char.IsLetterOrDigit(ch));
-        }
-
-        /// <summary>
-        /// Method used to hash password
-        /// </summary>
-        /// <param name="password">String passing password to hash</param>
-        /// <returns>Hashed password to string</returns>
-        private string HashPassword(string password)
-        {
-            byte[] salt = new byte[16];
-            RandomNumberGenerator rng = RandomNumberGenerator.Create();
-            rng.GetBytes(salt);
-
-            byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
-
-            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(passwordBytes, salt, 10000, HashAlgorithmName.SHA256);
-
-            byte[] hash = pbkdf2.GetBytes(20);
-
-            byte[] hashWithSalt = new byte[36];
-            Array.Copy(salt, 0, hashWithSalt, 0, 16);
-            Array.Copy(hash, 0, hashWithSalt, 16, 20);
-
-            return Convert.ToBase64String(hashWithSalt);
-        }
-
-        /// <summary>
         /// Method used to login user
         /// </summary>
         /// <param name="model">View model passing login data</param>
@@ -144,7 +83,7 @@ namespace MiCo.Services
             var user = _context.users.FirstOrDefault(u => u.email == model.email_or_login || u.login == model.email_or_login);
 
             /* Create session */
-            if (user != null && VerifyPassword(model.password, user.password) && user.status != -1 && user.status != 1)
+            if (user != null && Utilities.Tools.VerifyPassword(model.password, user.password) && user.status != -1 && user.status != 1)
             {
                 _contextAccessor.HttpContext?.Session.SetInt32("UserId", user.id);
                 _contextAccessor.HttpContext?.Session.SetString("Nickname", user.nickname);
@@ -165,31 +104,6 @@ namespace MiCo.Services
         public bool LogoutUser()
         {
             _contextAccessor.HttpContext?.Session.Clear();
-            return true;
-        }
-
-        /// <summary>
-        /// Method used  to verify password
-        /// </summary>
-        /// <param name="enteredPassword">Password entered during login process</param>
-        /// <param name="storedHashedPassword">Password saved in database</param>
-        /// <returns>False if passwords don't match else true</returns>
-        private bool VerifyPassword(string enteredPassword, string storedHashedPassword)
-        {
-            byte[] hashWithSaltBytes = Convert.FromBase64String(storedHashedPassword);
-
-            byte[] salt = new byte[16];
-            Array.Copy(hashWithSaltBytes, 0, salt, 0, 16);
-
-            Rfc2898DeriveBytes pbkdf2 = new Rfc2898DeriveBytes(enteredPassword, salt, 10000, HashAlgorithmName.SHA256);
-            byte[] hash = pbkdf2.GetBytes(20);
-
-            for (int i = 0; i < 20; i++)
-            {
-                if (hashWithSaltBytes[i + 16] != hash[i])
-                    return false;
-            }
-
             return true;
         }
     }

@@ -30,7 +30,7 @@ namespace MiCo.Services
             {
                 string[]? tagsArray = null;
 
-                if (string.IsNullOrWhiteSpace(model.title) && !IsValidTitle(model.title))
+                if (string.IsNullOrWhiteSpace(model.title) && !Utilities.Tools.IsValidTitle(model.title))
                     return new ResultHelper(false, "Invalid title!");
 
                 if (model.title.Length >= 75)
@@ -49,7 +49,7 @@ namespace MiCo.Services
                 {
                     tagsArray = model.tags.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
 
-                    if (!tagsArray.All(tag => IsValidTags(tag)))
+                    if (!tagsArray.All(tag => Utilities.Tools.IsValidTags(tag)))
                         return new ResultHelper(false, "Invalid tags!");
 
                     tagsArray = tagsArray.Select(tag => $"#{tag.Trim()}").ToArray();
@@ -150,26 +150,6 @@ namespace MiCo.Services
             }
 
             return new ResultHelper(false, "You can't do that!");
-        }
-
-        /// <summary>
-        /// Method used to check if title is valid
-        /// </summary>
-        /// <param name="title">String passing title</param>
-        /// <returns>True if valid else false</returns>
-        public static bool IsValidTitle(string title)
-        {
-            return Regex.IsMatch(title, @"[@#*/\\;]");
-        }
-
-        /// <summary>
-        /// Method used to check if tags are valid
-        /// </summary>
-        /// <param name="tags">String passing tags</param>
-        /// <returns>True if valid else false</returns>
-        public static bool IsValidTags(string tags)
-        {
-            return Regex.IsMatch(tags, @"^[a-zA-Z0-9]+$");
         }
     }
 }
