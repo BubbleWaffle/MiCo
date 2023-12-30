@@ -1,25 +1,50 @@
 ﻿using MiCo.Data;
 using MiCo.Helpers;
-using MiCo.Models;
 using MiCo.Models.ViewModels;
-using Microsoft.EntityFrameworkCore;
+using MiCo.Models;
 using System.Security.Cryptography;
-using System.Text;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace MiCo.Services
 {
-    public class ProfileEditService
+    public class ProfileService : IProfileService
     {
         private readonly MiCoDbContext _context;
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ProfileEditService(MiCoDbContext context, IHttpContextAccessor contextAccessor, IWebHostEnvironment hostEnvironment)
-        {  
+        public ProfileService(MiCoDbContext context, IHttpContextAccessor contextAccessor, IWebHostEnvironment hostEnvironment)
+        {
             _context = context;
             _contextAccessor = contextAccessor;
             _hostEnvironment = hostEnvironment;
+        }
+
+        /// <summary>
+        /// Method used to load content to specific profile
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <returns>ProfileContentViewModel with data</returns>
+        public Task<ProfileContentViewModel> ProfileContent(string? login)
+        {
+            var user = _context.users.FirstOrDefault(u => u.login == login);
+
+            if (user == null)
+                return Task.FromResult(new ProfileContentViewModel());
+
+            string pfp_url = user.pfp ?? "../content/default/pfp_default.svg";
+
+            var profileContentViewModel = new ProfileContentViewModel
+            {
+                nickname = user.nickname,
+                login = user.login,
+                creation_date = user.creation_date.DateTime,
+                pfp = pfp_url,
+                role = user.role
+            };
+
+            return Task.FromResult(profileContentViewModel);
         }
 
         /// <summary>
@@ -200,6 +225,70 @@ namespace MiCo.Services
             _contextAccessor.HttpContext?.Session.SetInt32("Role", user.role);
             if (user.pfp != null) _contextAccessor.HttpContext?.Session.SetString("PFP", user.pfp);
             else _contextAccessor.HttpContext?.Session.SetString("PFP", "../content/default/pfp_default.svg");
+        }
+
+        /// <summary>
+        /// Method used to delete profile
+        /// </summary>
+        /// <param name="id">Id currently logged user</param>
+        /// <param name="model">View model passing delete data</param>
+        /// <returns>Helper reporting success or error</returns>
+        public async Task<ResultHelper> ProfileDelete(int? id, ProfileDeleteViewModel model)
+        {
+            var user = _context.users.FirstOrDefault(u => u.id == id);
+
+            if (user != null && VerifyPassword(model.password, user.password) && !string.IsNullOrWhiteSpace(model.password))
+            {
+                user.status = -1;
+
+                _context.users.Update(user);
+                await _context.SaveChangesAsync();
+
+                _contextAccessor.HttpContext?.Session.Clear();
+
+                return new ResultHelper(true, "Your account has been deleted.");
+            }
+
+            return new ResultHelper(false, "Incorrect password!");
+        }
+
+        /// <summary>
+        /// Method used to report specific user
+        /// </summary>
+        /// <param name="id_reported_user">Id reported user</param>
+        /// <param name="id_reporting_user">Id reporting user (currently logged user)</param>
+        /// <param name="model">View model passing report data</param>
+        /// <returns>Helper reporting success or error</returns>
+        public async Task<ResultHelper> ProfileReport(int id_reported_user, int? id_reporting_user, ProfileReportViewModel model)
+        {
+            int non_nullable_id = id_reporting_user ?? default(int); //Convert nullable int value to non-nullable
+
+            var existing_report = _context.reports
+                .Where(r => r.id_reporting_user == non_nullable_id && r.id_reported_user == id_reported_user &&
+                r.report_date >= DateTimeOffset.Now.AddDays(-1))
+                .FirstOrDefault();
+
+            if (existing_report != null)
+                return new ResultHelper(false, "You have recently reported this user! Take a break.");
+
+            if (string.IsNullOrWhiteSpace(model.reason))
+                return new ResultHelper(false, "You have to enter reason!");
+
+            if (model.reason.Length > 300)
+                return new ResultHelper(false, "Your reason is too long!");
+
+            var newReport = new Reports
+            {
+                id_reported_user = id_reported_user,
+                id_reporting_user = non_nullable_id,
+                reason = model.reason,
+                report_date = DateTimeOffset.Now
+            };
+
+            _context.reports.Add(newReport);
+            await _context.SaveChangesAsync();
+
+            return new ResultHelper(true, "We received your report!");
         }
     }
 }

@@ -6,11 +6,11 @@ namespace MiCo.Controllers
 {
     public class ThreadController : Controller
     {
-        private readonly ThreadCreateService _threadCreateService;
+        private readonly IThreadService _threadService;
 
-        public ThreadController(ThreadCreateService threadCreateService)
+        public ThreadController(IThreadService threadService)
         {
-            _threadCreateService = threadCreateService;
+            _threadService = threadService;
         }
 
         public IActionResult Index()
@@ -40,7 +40,7 @@ namespace MiCo.Controllers
         {
             if (ModelState.IsValid) 
             {
-                var result = await _threadCreateService.ThreadCreate(HttpContext.Session.GetInt32("UserId"), model);
+                var result = await _threadService.ThreadCreate(HttpContext.Session.GetInt32("UserId"), model);
 
                 if (result.RHsuccess)
                 {

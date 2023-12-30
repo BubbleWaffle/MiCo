@@ -8,26 +8,11 @@ namespace MiCo.Controllers
     public class ProfileController : Controller
     {
         private readonly MiCoDbContext _context;
-        private readonly ProfileContentService _profileContentService;
-        private readonly ProfileEditService _profileEditService;
-        private readonly ProfileReportService _profileReportService;
-        private readonly ProfileDeleteService _profileDeleteService;
-
-        /// <summary>
-        /// Profile controller with methods used to load content, edit, report and delete account
-        /// </summary>
-        /// <param name="context">Database context</param>
-        /// <param name="profileContentService">Load profile content service</param>
-        /// <param name="profileEditService">Edit profile content service</param>
-        /// <param name="profileReportService">Report profile content service</param>
-        /// <param name="profileDeleteService">Delete profile content service</param>
-        public ProfileController(MiCoDbContext context, ProfileContentService profileContentService, ProfileEditService profileEditService, ProfileReportService profileReportService, ProfileDeleteService profileDeleteService)
+        private readonly IProfileService _profileService;
+        public ProfileController(MiCoDbContext context, IProfileService profileService)
         {
             _context = context;
-            _profileContentService = profileContentService;
-            _profileEditService = profileEditService;
-            _profileReportService = profileReportService;
-            _profileDeleteService = profileDeleteService;
+            _profileService = profileService;
         }
 
         /// <summary>
@@ -38,7 +23,7 @@ namespace MiCo.Controllers
         [HttpGet("{login}")]
         public async Task<IActionResult> Index([FromRoute(Name = "login")] string login)
         {
-            var result = await _profileContentService.ProfileContent(login);
+            var result = await _profileService.ProfileContent(login);
 
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
@@ -73,7 +58,7 @@ namespace MiCo.Controllers
                 /* Convert string to bool */
                 bool deletePfp = !string.IsNullOrEmpty(model.delete_pfp) && model.delete_pfp.ToLower() == "true";
 
-                var result = await _profileEditService.ProfileEdit(HttpContext.Session.GetInt32("UserId"), model, deletePfp);
+                var result = await _profileService.ProfileEdit(HttpContext.Session.GetInt32("UserId"), model, deletePfp);
 
                 if (result.RHsuccess)
                 {
@@ -122,7 +107,7 @@ namespace MiCo.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _profileReportService.ProfileReport(user.id, HttpContext.Session.GetInt32("UserId"), model);
+                var result = await _profileService.ProfileReport(user.id, HttpContext.Session.GetInt32("UserId"), model);
 
                 if (result.RHsuccess)
                 {
@@ -161,7 +146,7 @@ namespace MiCo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _profileDeleteService.ProfileDelete(HttpContext.Session.GetInt32("UserId"), model);
+                var result = await _profileService.ProfileDelete(HttpContext.Session.GetInt32("UserId"), model);
 
                 if (result.RHsuccess)
                 {

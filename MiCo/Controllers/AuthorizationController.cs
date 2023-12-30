@@ -6,18 +6,12 @@ namespace MiCo.Controllers
 {
     public class AuthorizationController : Controller
     {
-        private readonly RegistrationService _registrationService;
-        private readonly LoginService _loginService;
+        private readonly IAuthorizationService _authorizationService;
 
-        /// <summary>
-        /// Authorization controller with methods used to login and registrate users
-        /// </summary>
-        /// <param name="registrationService">Registration service</param>
-        /// <param name="loginService">Login service</param>
-        public AuthorizationController(RegistrationService registrationService, LoginService loginService)
+
+        public AuthorizationController(IAuthorizationService authorizationService)
         {
-            _registrationService = registrationService;
-            _loginService = loginService;
+            _authorizationService = authorizationService;
         }
 
         /// <summary>
@@ -40,7 +34,7 @@ namespace MiCo.Controllers
         /// <returns>Redirect to login view</returns>
         public IActionResult Logout()
         {
-            _loginService.LogoutUser();
+            _authorizationService.LogoutUser();
 
             return RedirectToAction("Login");
         }
@@ -55,7 +49,7 @@ namespace MiCo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = _loginService.LoginUser(model);
+                var result = _authorizationService.LoginUser(model);
 
                 if (result.RHsuccess)
                 {
@@ -92,7 +86,7 @@ namespace MiCo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var result = await _registrationService.RegisterUser(model);
+                var result = await _authorizationService.RegisterUser(model);
 
                 if (result.RHsuccess)
                 {

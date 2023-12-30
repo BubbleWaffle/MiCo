@@ -20,8 +20,8 @@
         {
             using (var scope = _serviceProvider.CreateScope())
             {
-                var banService = scope.ServiceProvider.GetRequiredService<UnbanService>();
-                banService.Unban(); // Call Unban method from UnbanService
+                var justiceService = scope.ServiceProvider.GetRequiredService<IJusticeService>();
+                justiceService.Unban(); // Call Unban method from JusticeService
             }
         }
 

@@ -1,19 +1,19 @@
 ﻿using MiCo.Data;
 using MiCo.Helpers;
-using MiCo.Models;
 using MiCo.Models.ViewModels;
+using MiCo.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
 
 namespace MiCo.Services
 {
-    public class ThreadCreateService
+    public class ThreadService : IThreadService
     {
         private readonly MiCoDbContext _context;
         private readonly IWebHostEnvironment _hostEnvironment;
 
-        public ThreadCreateService(MiCoDbContext context, IWebHostEnvironment hostEnvironment)
-        { 
+        public ThreadService(MiCoDbContext context, IWebHostEnvironment hostEnvironment)
+        {
             _context = context;
             _hostEnvironment = hostEnvironment;
         }
@@ -75,9 +75,9 @@ namespace MiCo.Services
 
                         if (existingTag == null)
                         {
-                            var newTag = new Tags 
-                            { 
-                                tag = tagText 
+                            var newTag = new Tags
+                            {
+                                tag = tagText
                             };
                             _context.tags.Add(newTag);
                             await _context.SaveChangesAsync();
