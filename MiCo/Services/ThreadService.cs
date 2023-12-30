@@ -52,7 +52,10 @@ namespace MiCo.Services
                     if (!tagsArray.All(tag => Utilities.Tools.IsValidTags(tag)))
                         return new ResultHelper(false, "Invalid tags!");
 
-                    tagsArray = tagsArray.Select(tag => $"#{tag.Trim()}").ToArray();
+                    tagsArray = tagsArray.Select(tag => $"#{tag.Trim()}").Distinct().ToArray();
+
+                    if (tagsArray.Length > 9)
+                        return new ResultHelper(false, "Too many tags (MAX 9)!");
                 }
 
                 var thread = new Threads

@@ -60,6 +60,9 @@ namespace MiCo.Services
                 if (string.IsNullOrWhiteSpace(model.old_password))
                     return new ResultHelper(false, "Please enter your current password!");
 
+                if (!Utilities.Tools.VerifyPassword(model.old_password, user.password))
+                    return new ResultHelper(false, "Incorrect password!");
+
                 if (!string.IsNullOrWhiteSpace(model.nickname) && Utilities.Tools.IsValidLoginOrNickname(model.nickname)) user.nickname = model.nickname;
 
                 if (!string.IsNullOrWhiteSpace(model.login))
@@ -120,9 +123,6 @@ namespace MiCo.Services
 
                     if (model.old_password == model.new_password)
                         return new ResultHelper(false, "New password cannot be the same as the old one!");
-
-                    if (!Utilities.Tools.VerifyPassword(model.old_password, user.password))
-                        return new ResultHelper(false, "Incorrect password!");
 
                     var hashedPassword = Utilities.Tools.HashPassword(model.new_password);
 
