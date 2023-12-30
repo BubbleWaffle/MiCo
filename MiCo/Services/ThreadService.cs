@@ -141,7 +141,7 @@ namespace MiCo.Services
                     }
                 }
 
-                return new ResultHelper(true, "Thread created successfully!");
+                return new ResultHelper(true, "Thread created successfully!", thread.id);
             }
 
             return new ResultHelper(false, "You can't do that!");

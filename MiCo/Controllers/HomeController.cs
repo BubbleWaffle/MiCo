@@ -21,7 +21,7 @@ namespace MiCo.Controllers
         /// <param name="search">Key word used for search</param>
         /// <param name="sort_option">Sort option (Latest or Hot)</param>
         /// <returns>Home view with loaded threads</returns>
-        public async Task<IActionResult> Index(string search, string sort_option)
+        public async Task<IActionResult> Index([FromQuery] string search, string sort_option)
         {
             var model = new HomeViewModel();
             model = await _homeService.HomeContent(search, sort_option, model);

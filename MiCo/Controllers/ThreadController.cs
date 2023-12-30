@@ -16,7 +16,7 @@ namespace MiCo.Controllers
             _threadService = threadService;
         }
 
-        [HttpGet("/Thread/{id}")]
+        [HttpGet("/Thread/ThreadNo={id}")]
         public async Task<IActionResult> Index([FromRoute(Name = "id")] int id)
         {
             var thread = _context.threads.FirstOrDefault(t => t.id == id);
@@ -53,7 +53,7 @@ namespace MiCo.Controllers
 
                 if (result.RHsuccess)
                 {
-                    return RedirectToAction("Index", "Home");
+                    return RedirectToAction("Index", new { id = result.RHno });
                 }
                 else
                 {
