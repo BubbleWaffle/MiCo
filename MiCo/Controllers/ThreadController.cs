@@ -1,4 +1,5 @@
-﻿using MiCo.Models.ViewModels;
+﻿using MiCo.Data;
+using MiCo.Models.ViewModels;
 using MiCo.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -6,15 +7,23 @@ namespace MiCo.Controllers
 {
     public class ThreadController : Controller
     {
+        private readonly MiCoDbContext _context;
         private readonly IThreadService _threadService;
 
-        public ThreadController(IThreadService threadService)
+        public ThreadController(MiCoDbContext context, IThreadService threadService)
         {
+            _context = context;
             _threadService = threadService;
         }
 
-        public IActionResult Index()
+        [HttpGet("/Thread/{id}")]
+        public async Task<IActionResult> Index([FromRoute(Name = "id")] int id)
         {
+            var thread = _context.threads.FirstOrDefault(t => t.id == id);
+
+            if (thread == null)
+                return RedirectToAction("Index", "Home");
+
             return View();
         }
 

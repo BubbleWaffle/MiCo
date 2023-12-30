@@ -21,58 +21,65 @@
             {
                 <a type="button" class="btn btn-mico btn-sm mb-2" asp-controller="Thread" asp-action="Create"><i class="bi bi-plus-circle"></i> Creat new topic</a>
             }
-            <ul class="list-unstyled">
 
-                @foreach (var thread in Model._threads)
-                {
-                    <li class="media border d-flex align-items-center p-2">
-                        <!-- Tutaj umieść kod HTML z danymi wątku, korzystając z właściwości thread -->
-                        @if (thread.thread_images != null && thread.thread_images.Count > 0)
-                        {
-                            var firstImage = thread.thread_images[0]; // Pobierz pierwszy obrazek dla wątku
-                            <img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="@firstImage.image" alt="Generic placeholder image">
-                        }
-                        else
-                        {
-                            <img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="../content/default/empt_default.svg" alt="Generic placeholder image">
-                        }
-                        <div class="media-body px-3 text-truncate w-100">
-                            <div class="row">
-                                <div class="col">
-                                    <h5 class="mt-0 mb-1">@thread.title</h5>
-                                    <small>@thread.author.login</small>
-                                </div>
-                                <div class="col d-flex flex-row-reverse">
-                                    <small>@thread.creation_date.UtcDateTime</small>
-                                </div>
-                            </div>
-                            @thread.description
-                            @if (thread.thread_tags != null)
+            @if(Model != null)
+            {
+                <ul class="list-unstyled">
+
+                    @foreach (var thread in Model._threads)
+                    {
+                        <li class="media border d-flex align-items-center p-2">
+                            @if (thread.thread_images != null && thread.thread_images.Count > 0)
                             {
-                                <div class="tags-container d-flex flex-wrap mt-2">
-                                    @foreach (var tag in thread.thread_tags)
-                                    {
-                                        <span class="badge badge-primary mr-1">@tag.tag.tag</span>
-                                    }
-                                </div>
+                                var firstImage = thread.thread_images[0];
+                                <a asp-controller="Thread" asp-action="@thread.id"><img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="@firstImage.image" alt="Generic placeholder image"></a>
                             }
-                            <div class="row d-flex mt-2">
-                                <div class="col text-warning">
-                                    <i class="bi bi-star-fill"></i> : 123
+                            else
+                            {
+                                <a asp-controller="Thread" asp-action="@thread.id"><img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="../content/default/empt_default.svg" alt="Generic placeholder image"></a>
+                            }
+                            <div class="media-body px-3 text-truncate w-100">
+                                <div class="row">
+                                    <div class="col">
+                                        <a class="text-decoration-none" asp-controller="Thread" asp-action="@thread.id"><h5 class="mt-0 mb-1">@thread.title</h5></a>
+                                        <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@thread.author.login"><small>@thread.author.login</small></a>
+                                    </div>
+                                    <div class="col d-flex flex-row-reverse">
+                                        <small>@thread.creation_date.UtcDateTime</small>
+                                    </div>
                                 </div>
-                                <div class="col-10">
-                                    <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                                        <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                                        <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
-                                        <button type="button" class="btn btn-outline-secondary"><i class="bi bi-share"></i></button>
+                                @thread.description
+                                @if (thread.thread_tags != null)
+                                {
+                                    <div class="tags-container d-flex flex-wrap mt-2">
+                                        @foreach (var tag in thread.thread_tags)
+                                        {
+                                            <span class="badge badge-primary mr-1">@tag.tag.tag</span>
+                                        }
+                                    </div>
+                                }
+                                <div class="row d-flex mt-2">
+                                    <div class="col text-warning">
+                                        <i class="bi bi-star-fill"></i> : 123
+                                    </div>
+                                    <div class="col-10">
+                                        <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
+                                            <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                            <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                            <button type="button" class="btn btn-outline-secondary"><i class="bi bi-share"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </li>
-                }
+                        </li>
+                    }
 
-            </ul>
+                </ul>
+            }
+            else
+            {
+                <h1 class="text-mico">Nothing here but us chickens... <i class="bi bi-crosshair"></i></h1>
+            }
         </div>
 
         <div class="col d-none d-xl-block">
