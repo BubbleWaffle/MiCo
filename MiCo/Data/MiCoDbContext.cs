@@ -19,6 +19,12 @@ namespace MiCo.Data
                 .WithMany()
                 .HasForeignKey(t => t.id_OG_thread);
 
+            modelBuilder.Entity<Threads>()
+                .HasMany(t => t.thread_images)
+                .WithOne(ti => ti.which_thread)
+                .HasForeignKey(ti => ti.id_which_thread)
+                .OnDelete(DeleteBehavior.Cascade);
+
             modelBuilder.Entity<Bans>()
                 .HasOne(b => b.banned_user)
                 .WithMany()
@@ -55,8 +61,6 @@ namespace MiCo.Data
                 .HasForeignKey(l => l.id_thread)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<ThreadImages>().HasKey(ti => new { ti.id_thread, ti.id_image });
-
             modelBuilder.Entity<ThreadTags>().HasKey(tt => new { tt.id_thread, tt.id_tag });
 
             base.OnModelCreating(modelBuilder);
@@ -69,7 +73,6 @@ namespace MiCo.Data
         public DbSet<Threads> threads { get; set; }
         public DbSet<ThreadTags> thread_tags { get; set; }
         public DbSet<Tags> tags { get; set; }
-        public DbSet<ThreadImages> thread_images { get; set; }
         public DbSet<Images> images { get; set; }
     }
 }

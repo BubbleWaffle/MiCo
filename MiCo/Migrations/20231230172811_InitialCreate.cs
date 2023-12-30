@@ -12,19 +12,6 @@ namespace MiCo.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "images",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    image = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_images", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "tags",
                 columns: table => new
                 {
@@ -146,6 +133,26 @@ namespace MiCo.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "images",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id_which_thread = table.Column<int>(type: "int", nullable: false),
+                    image = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_images", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_images_threads_id_which_thread",
+                        column: x => x.id_which_thread,
+                        principalTable: "threads",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "likes",
                 columns: table => new
                 {
@@ -168,30 +175,6 @@ namespace MiCo.Migrations
                         column: x => x.id_user,
                         principalTable: "users",
                         principalColumn: "id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "thread_images",
-                columns: table => new
-                {
-                    id_thread = table.Column<int>(type: "int", nullable: false),
-                    id_image = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_thread_images", x => new { x.id_thread, x.id_image });
-                    table.ForeignKey(
-                        name: "FK_thread_images_images_id_image",
-                        column: x => x.id_image,
-                        principalTable: "images",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_thread_images_threads_id_thread",
-                        column: x => x.id_thread,
-                        principalTable: "threads",
-                        principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -229,6 +212,11 @@ namespace MiCo.Migrations
                 column: "id_moderator");
 
             migrationBuilder.CreateIndex(
+                name: "IX_images_id_which_thread",
+                table: "images",
+                column: "id_which_thread");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_likes_id_thread",
                 table: "likes",
                 column: "id_thread");
@@ -247,11 +235,6 @@ namespace MiCo.Migrations
                 name: "IX_reports_id_reporting_user",
                 table: "reports",
                 column: "id_reporting_user");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_thread_images_id_image",
-                table: "thread_images",
-                column: "id_image");
 
             migrationBuilder.CreateIndex(
                 name: "IX_thread_tags_id_tag",
@@ -281,19 +264,16 @@ namespace MiCo.Migrations
                 name: "bans");
 
             migrationBuilder.DropTable(
+                name: "images");
+
+            migrationBuilder.DropTable(
                 name: "likes");
 
             migrationBuilder.DropTable(
                 name: "reports");
 
             migrationBuilder.DropTable(
-                name: "thread_images");
-
-            migrationBuilder.DropTable(
                 name: "thread_tags");
-
-            migrationBuilder.DropTable(
-                name: "images");
 
             migrationBuilder.DropTable(
                 name: "tags");

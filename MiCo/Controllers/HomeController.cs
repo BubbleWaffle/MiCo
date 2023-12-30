@@ -1,4 +1,6 @@
-using MiCo.Models;
+﻿using MiCo.Models;
+using MiCo.Models.ViewModels;
+using MiCo.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,16 +8,19 @@ namespace MiCo.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IHomeService _homeService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IHomeService homeService)
         {
-            _logger = logger;
+            _homeService = homeService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index(string search, string sort_option)
         {
-            return View();
+            var model = new HomeViewModel(); // Tworzymy nowy obiekt HomeViewModel
+            model = await _homeService.HomeContent(search, sort_option, model); // Używamy metody HomeContent, aby uzupełnić dane
+
+            return View(model);
         }
 
         public IActionResult Privacy()

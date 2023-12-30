@@ -28,8 +28,8 @@ namespace MiCo.Models
 
         public bool deleted { get; set; } = false;
 
-        public List<ThreadTags>? thread_tags { get; set; }
+        public List<Images>? thread_images { get; set; }
 
-        public List<ThreadImages>? thread_images { get; set; }
+        public List<ThreadTags>? thread_tags { get; set; }
     }
 }

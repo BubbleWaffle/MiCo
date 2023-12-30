@@ -63,11 +63,16 @@ namespace MiCo.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
 
+                    b.Property<int>("id_which_thread")
+                        .HasColumnType("int");
+
                     b.Property<string>("image")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
+
+                    b.HasIndex("id_which_thread");
 
                     b.ToTable("images");
                 });
@@ -143,21 +148,6 @@ namespace MiCo.Migrations
                     b.HasKey("id");
 
                     b.ToTable("tags");
-                });
-
-            modelBuilder.Entity("MiCo.Models.ThreadImages", b =>
-                {
-                    b.Property<int>("id_thread")
-                        .HasColumnType("int");
-
-                    b.Property<int>("id_image")
-                        .HasColumnType("int");
-
-                    b.HasKey("id_thread", "id_image");
-
-                    b.HasIndex("id_image");
-
-                    b.ToTable("thread_images");
                 });
 
             modelBuilder.Entity("MiCo.Models.ThreadTags", b =>
@@ -277,6 +267,17 @@ namespace MiCo.Migrations
                     b.Navigation("moderator");
                 });
 
+            modelBuilder.Entity("MiCo.Models.Images", b =>
+                {
+                    b.HasOne("MiCo.Models.Threads", "which_thread")
+                        .WithMany("thread_images")
+                        .HasForeignKey("id_which_thread")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("which_thread");
+                });
+
             modelBuilder.Entity("MiCo.Models.Likes", b =>
                 {
                     b.HasOne("MiCo.Models.Threads", "thread")
@@ -313,25 +314,6 @@ namespace MiCo.Migrations
                     b.Navigation("reported_user");
 
                     b.Navigation("reporting_user");
-                });
-
-            modelBuilder.Entity("MiCo.Models.ThreadImages", b =>
-                {
-                    b.HasOne("MiCo.Models.Images", "image")
-                        .WithMany("thread_images")
-                        .HasForeignKey("id_image")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MiCo.Models.Threads", "thread")
-                        .WithMany("thread_images")
-                        .HasForeignKey("id_thread")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("image");
-
-                    b.Navigation("thread");
                 });
 
             modelBuilder.Entity("MiCo.Models.ThreadTags", b =>
@@ -374,11 +356,6 @@ namespace MiCo.Migrations
                     b.Navigation("author");
 
                     b.Navigation("reply");
-                });
-
-            modelBuilder.Entity("MiCo.Models.Images", b =>
-                {
-                    b.Navigation("thread_images");
                 });
 
             modelBuilder.Entity("MiCo.Models.Tags", b =>

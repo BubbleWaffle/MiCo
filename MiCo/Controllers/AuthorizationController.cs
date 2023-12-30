@@ -8,7 +8,6 @@ namespace MiCo.Controllers
     {
         private readonly IAuthorizationService _authorizationService;
 
-
         public AuthorizationController(IAuthorizationService authorizationService)
         {
             _authorizationService = authorizationService;

@@ -130,19 +130,11 @@ namespace MiCo.Services
 
                         var image = new Images
                         {
+                            id_which_thread = thread.id,
                             image = $"../content/thread/{threadFolderName}/{uniqueFileName}"
                         };
 
                         _context.images.Add(image);
-                        await _context.SaveChangesAsync();
-
-                        var threadImage = new ThreadImages
-                        {
-                            id_thread = thread.id,
-                            id_image = image.id
-                        };
-
-                        _context.thread_images.Add(threadImage);
                         await _context.SaveChangesAsync();
 
                         counter++;

@@ -20,6 +20,7 @@ builder.Services.Configure<FormOptions>(options =>
 });
 
 /* Add services */
+builder.Services.AddScoped<IHomeService, HomeService>();
 builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IJusticeService, JusticeService>();

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MiCo.Models
 {
@@ -6,9 +7,11 @@ namespace MiCo.Models
     {
         [Key] public int id { get; set; }
 
+        [ForeignKey("which_thread")]
+        public int id_which_thread { get; set; }
+        public Threads which_thread { get; set; } = null!;
+
         [Required]
         public string image { get; set; } = null!;
-
-        public List<ThreadImages> thread_images { get; set; } = null!;
     }
 }

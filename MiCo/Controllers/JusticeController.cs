@@ -10,7 +10,6 @@ namespace MiCo.Controllers
         private readonly MiCoDbContext _context;
         private readonly IJusticeService _justiceService;
 
-
         public JusticeController(MiCoDbContext context, IJusticeService justiceService)
         {
             _context = context;
