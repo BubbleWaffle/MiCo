@@ -16,15 +16,16 @@ namespace MiCo.Controllers
         }
 
         /// <summary>
-        /// Method used to render home page with loaded threads
+        /// Method used to render home page with loaded threads and top users
         /// </summary>
         /// <param name="search">Key word used for search</param>
         /// <param name="sort_option">Sort option (Latest or Hot)</param>
-        /// <returns>Home view with loaded threads</returns>
+        /// <returns>Home view with loaded threads and top users</returns>
         public async Task<IActionResult> Index([FromQuery] string search, string sort_option)
         {
             var model = new HomeViewModel();
-            model = await _homeService.HomeContent(search, sort_option, model);
+            model._threads = await _homeService.HomeThreads(search, sort_option);
+            model._topUsers = await _homeService.HomeWOF(3);
 
             return View(model);
         }

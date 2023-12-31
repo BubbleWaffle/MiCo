@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MiCo.Migrations
 {
     [DbContext(typeof(MiCoDbContext))]
-    [Migration("20231230172811_InitialCreate")]
+    [Migration("20231231125806_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -345,7 +345,7 @@ namespace MiCo.Migrations
                         .HasForeignKey("id_OG_thread");
 
                     b.HasOne("MiCo.Models.Users", "author")
-                        .WithMany()
+                        .WithMany("user_threads")
                         .HasForeignKey("id_author")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -371,6 +371,11 @@ namespace MiCo.Migrations
                     b.Navigation("thread_images");
 
                     b.Navigation("thread_tags");
+                });
+
+            modelBuilder.Entity("MiCo.Models.Users", b =>
+                {
+                    b.Navigation("user_threads");
                 });
 #pragma warning restore 612, 618
         }

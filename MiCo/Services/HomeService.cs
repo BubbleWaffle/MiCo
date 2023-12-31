@@ -14,7 +14,13 @@ namespace MiCo.Services
             _context = context;
         }
 
-        public async Task<HomeViewModel> HomeContent(string search, string sort_option, HomeViewModel model)
+        /// <summary>
+        /// Method used to load threads to Home view
+        /// </summary>
+        /// <param name="search">String entered to searchbar</param>
+        /// <param name="sort_option">Sort option</param>
+        /// <returns>List of threads to controller</returns>
+        public async Task<List<Threads>> HomeThreads(string search, string sort_option)
         {
             var threadsQuery = _context.threads
                 .Include(t => t.author)
@@ -31,11 +37,11 @@ namespace MiCo.Services
                                 t.thread_tags!.Any(tag => tag.tag.tag.ToLower().Contains(search)));
             }
 
-            var threads = await threadsQuery
+            var threadsList = await threadsQuery
                 .OrderByDescending(t => t.creation_date)
                 .ToListAsync();
 
-            foreach (var thread in threads)
+            foreach (var thread in threadsList)
             {
                 var image = await _context.images
                     .Where(i => i.id_which_thread == thread.id)
@@ -44,9 +50,24 @@ namespace MiCo.Services
                 if (image != null) thread.thread_images = new List<Images> { image };
             }
 
-            model._threads = threads;
+            return threadsList;
+        }
 
-            return model;
+        /// <summary>
+        /// Method used to load TOP 3 active users
+        /// </summary>
+        /// <param name="no_3">Size of list</param>
+        /// <returns>Returns list of TOP 3 users</returns>
+        public async Task<List<Users>> HomeWOF(int no_3)
+        {
+            var topUsers = await _context.users
+                .Include(u => u.user_threads)
+                .Where(u => u.status != -1 && u.status != 1 && u.user_threads!.Count > 0)
+                .OrderByDescending(u => u.user_threads!.Count(t => !t.deleted))
+                .Take(no_3)
+                .ToListAsync();
+
+            return topUsers;
         }
     }
 }
