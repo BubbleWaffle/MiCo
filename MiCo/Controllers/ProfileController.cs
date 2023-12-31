@@ -23,11 +23,13 @@ namespace MiCo.Controllers
         [HttpGet("{login}")]
         public async Task<IActionResult> Index([FromRoute(Name = "login")] string login)
         {
-            var result = await _profileService.ProfileContent(login);
+            var result = new ProfileViewModel();
+            result._profileContent = await _profileService.ProfileContent(login);
+            result._profileThreads = await _profileService.ProfileThreads(login);
 
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
-            if (result.login == null || user == null || user.status == -1 || user.status == 1)
+            if (result._profileContent.login == null || user == null || user.status == -1 || user.status == 1)
                 return RedirectToAction("Index", "Home");
 
             return View(result);

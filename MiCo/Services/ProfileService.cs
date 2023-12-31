@@ -2,6 +2,7 @@
 using MiCo.Helpers;
 using MiCo.Models.ViewModels;
 using MiCo.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace MiCo.Services
 {
@@ -42,6 +43,20 @@ namespace MiCo.Services
             };
 
             return Task.FromResult(profileContentViewModel);
+        }
+
+        public async Task<List<Threads>> ProfileThreads(string? login)
+        {
+            var threadsList = await _context.threads
+                .Include(t => t.author)
+                .Include(t => t.thread_tags!)
+                    .ThenInclude(tt => tt.tag)
+                .Include(t => t.thread_images)
+                .Where(t => t.author.login == login && t.id_reply == null && t.id_OG_thread == null && !t.deleted && t.author.status != -1 && t.author.status != 1)
+                .OrderBy(t => t.creation_date)
+                .ToListAsync();
+
+            return threadsList;
         }
 
         /// <summary>

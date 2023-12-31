@@ -23,11 +23,11 @@ namespace MiCo.Controllers
         /// <returns>Home view with loaded threads and top users</returns>
         public async Task<IActionResult> Index([FromQuery] string search, string sort_option)
         {
-            var model = new HomeViewModel();
-            model._threads = await _homeService.HomeThreads(search, sort_option);
-            model._topUsers = await _homeService.HomeWOF(3);
+            var result = new HomeViewModel();
+            result._threads = await _homeService.HomeThreads(search, sort_option);
+            result._topUsers = await _homeService.HomeWOF(3);
 
-            return View(model);
+            return View(result);
         }
 
         public IActionResult Privacy()

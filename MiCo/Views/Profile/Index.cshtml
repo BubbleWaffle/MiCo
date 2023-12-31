@@ -1,26 +1,26 @@
-﻿@model MiCo.Models.ViewModels.ProfileContentViewModel
+﻿@model MiCo.Models.ViewModels.ProfileViewModel
 @{
-    ViewData["Title"] = @Model.nickname + " - ";
+    ViewData["Title"] = @Model._profileContent.nickname + " - ";
 }
 <div class="container">
     <div class="row">
 
         <div class="col-3 justify-content-center text-center">
             <div class="col">
-                <img class="flex-shrink-0 pfp rounded-circle border" src="@Model.pfp" alt="Generic placeholder image">
+                <img class="flex-shrink-0 pfp rounded-circle border" src="@Model._profileContent.pfp" alt="Generic placeholder image">
             </div>
             <div class="col">
                 <div class="fs-5">
-                    @Model.nickname
+                    @Model._profileContent.nickname
                 </div>
-                    @if (Model.role == 1)
+                    @if (Model._profileContent.role == 1)
                     {
                         <small><span class="badge rounded-pill text-bg-warning">MOD</span></small>
                     }
-                <small>#@Model.login</small>
+                <small>#@Model._profileContent.login</small>
             </div>
             <div class="col">
-                <small><i>Joined:</i> @Model.creation_date</small>
+                <small><i>Joined:</i> @Model._profileContent.creation_date</small>
             </div>
             <div class="col d-flex justify-content-center">
                 <div class="text-warning me-2">
@@ -33,20 +33,20 @@
             <div class="col mt-2">
                 <div class="btn-group btn-group-sm d-grid d-md-inline-flex" role="group" aria-label="Small button group">
 
-                    @if (Model.login == Context.Session.GetString("Login"))
+                    @if (Model._profileContent.login == Context.Session.GetString("Login"))
                     {
                         <a type="button" class="btn btn-warning" asp-controller="Profile" asp-action="Edit">Edit</a>
                         <a type="button" class="btn btn-danger" asp-controller="Profile" asp-action="Delete">Delete</a>
                     }
 
-                    @if (Model.login != Context.Session.GetString("Login") && Context.Session.GetInt32("UserId") != null && Context.Session.GetInt32("Role") != 1)
+                    @if (Model._profileContent.login != Context.Session.GetString("Login") && Context.Session.GetInt32("UserId") != null && Context.Session.GetInt32("Role") != 1)
                     {
-                        <a type="button" class="btn btn-danger" asp-controller="Report" asp-action="@Model.login">Report</a>
+                        <a type="button" class="btn btn-danger" asp-controller="Report" asp-action="@Model._profileContent.login">Report</a>
                     }
 
-                    @if (Model.login != Context.Session.GetString("Login") && Context.Session.GetInt32("Role") == 1 )
+                    @if (Model._profileContent.login != Context.Session.GetString("Login") && Context.Session.GetInt32("Role") == 1)
                     {
-                        <a type="button" class="btn btn-danger" asp-controller="Justice" asp-action="Ban=@Model.login">Ban</a>
+                        <a type="button" class="btn btn-danger" asp-controller="Justice" asp-action="Ban=@Model._profileContent.login">Ban</a>
                     }
                 </div>
             </div>
@@ -54,128 +54,74 @@
 
         <div class="col-9">
             <div class="fw-bold fs-4">
-                @Model.nickname threads:
+                @Model._profileContent.nickname threads:
             </div>
-            @if (Model.login == Context.Session.GetString("Login"))
+            @if (Model._profileContent.login == Context.Session.GetString("Login"))
             {
                 <a type="button" class="btn btn-mico btn-sm mb-2" asp-controller="Thread" asp-action="Create"><i class="bi bi-plus-circle"></i> Creat new topic</a>
             }
-            <ul class="list-unstyled">
-                <li class="media border d-flex align-items-center p-2">
-                    <img class="mr-3 flex-shrink-0 threads-list-img rounded" src="https://via.placeholder.com/100" alt="Generic placeholder image">
-                    <div class="media-body px-3 text-truncate">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="mt-0 mb-1">Title</h5>
-                                <small>Author</small>
-                            </div>
-                            <div class="col d-flex flex-row-reverse">
-                                <small>Date</small>
-                            </div>
-                        </div>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        <div class="tags-container d-flex flex-wrap mt-2">
-                            <span class="badge badge-primary mr-1">Tag1</span>
-                            <span class="badge badge-primary mr-1">Tag2</span>
-                            <span class="badge badge-primary mr-1">Tag3</span>
-                            <span class="badge badge-primary mr-1">Tag4</span>
-                            <span class="badge badge-primary mr-1">Tag5</span>
-                            <span class="badge badge-primary mr-1">Tag6</span>
-                            <span class="badge badge-primary mr-1">Tag7</span>
-                            <span class="badge badge-primary mr-1">Tag8</span>
-                            <span class="badge badge-primary mr-1">Tag9</span>
-                        </div>
-                        <div class="row d-flex mt-2">
-                            <div class="col text-warning">
-                                <i class="bi bi-star-fill"></i> : 123
-                            </div>
-                            <div class="col-10">
-                                <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                                    <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
-                                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-share"></i></button>
+
+            @if (Model._profileThreads.Any())
+            {
+                <ul class="list-unstyled">
+
+                    @foreach (var thread in Model._profileThreads)
+                    {
+                        <li class="media border d-flex align-items-center p-2">
+                            @if (thread.thread_images != null && thread.thread_images.Count > 0)
+                            {
+                                var firstImage = thread.thread_images[0];
+                                <a asp-controller="Thread" asp-action="Index" asp-route-id="@thread.id"><img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="@firstImage.image" alt="Generic placeholder image"></a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Thread" asp-action="Index" asp-route-id="@thread.id"><img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="../content/default/empt_default.svg" alt="Generic placeholder image"></a>
+                            }
+                            <div class="media-body px-3 text-truncate w-100">
+                                <div class="row">
+                                    <div class="col">
+                                        <a class="text-decoration-none" asp-controller="Thread" asp-action="Index" asp-route-id="@thread.id"><h5 class="mt-0 mb-1">@thread.title</h5></a>
+                                        <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@thread.author.login"><small>Author: @thread.author.login</small></a>
+                                    </div>
+                                    <div class="col d-flex flex-row-reverse">
+                                        <small class="text-decoration-underline">@thread.creation_date.UtcDateTime</small>
+                                    </div>
+                                </div>
+                                @thread.description
+                                @if (thread.thread_tags != null)
+                                {
+                                    <div class="tags-container d-flex flex-wrap mt-2">
+                                        @foreach (var tag in thread.thread_tags)
+                                        {
+                                            <a class="text-decoration-none text-reset" asp-controller="Home" asp-action="Index" asp-route-search="@tag.tag.tag"><span class="badge badge-primary mr-1">@tag.tag.tag</span></a>
+                                        }
+                                    </div>
+                                }
+                                <div class="row d-flex mt-2">
+                                    <div class="col text-warning">
+                                        <i class="bi bi-star-fill"></i> : 123
+                                    </div>
+                                    <div class="col-10">
+                                        <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
+                                            @if (thread.id_author != Context.Session.GetInt32("UserId"))
+                                            {
+                                                <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                                <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                            }
+                                            <button type="button" class="btn btn-outline-secondary"><i class="bi bi-share"></i></button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="media border  d-flex align-items-center p-2">
-                    <img class="mr-3 flex-shrink-0 threads-list-img rounded" src="https://via.placeholder.com/300" alt="Generic placeholder image">
-                    <div class="media-body px-3 text-truncate">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="mt-0 mb-1">Title</h5>
-                                <small>Author</small>
-                            </div>
-                            <div class="col d-flex flex-row-reverse">
-                                <small>Date</small>
-                            </div>
-                        </div>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        <div class="tags-container d-flex flex-wrap mt-2">
-                            <span class="badge badge-primary mr-1">Tag1</span>
-                            <span class="badge badge-primary mr-1">Tag2</span>
-                            <span class="badge badge-primary mr-1">Tag3</span>
-                            <span class="badge badge-primary mr-1">Tag4</span>
-                            <span class="badge badge-primary mr-1">Tag5</span>
-                            <span class="badge badge-primary mr-1">Tag6</span>
-                            <span class="badge badge-primary mr-1">Tag7</span>
-                            <span class="badge badge-primary mr-1">Tag8</span>
-                            <span class="badge badge-primary mr-1">Tag9</span>
-                        </div>
-                        <div class="row d-flex mt-2">
-                            <div class="col text-warning">
-                                <i class="bi bi-star-fill"></i> : 123
-                            </div>
-                            <div class="col-10">
-                                <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                                    <button type="button" class="btn btn-outline-danger active"><i class="bi bi-hand-thumbs-down"></i></button>
-                                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-share"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="media border d-flex align-items-center p-2">
-                    <img class="mr-3 flex-shrink-0 threads-list-img rounded" src="https://via.placeholder.com/32x50" alt="Generic placeholder image">
-                    <div class="media-body px-3 text-truncate">
-                        <div class="row">
-                            <div class="col">
-                                <h5 class="mt-0 mb-1">Title</h5>
-                                <small>Author</small>
-                            </div>
-                            <div class="col d-flex flex-row-reverse">
-                                <small>Date</small>
-                            </div>
-                        </div>
-                        Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin. Cras purus odio, vestibulum in vulputate at, tempus viverra turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis in faucibus.
-                        <div class="tags-container d-flex flex-wrap mt-2">
-                            <span class="badge badge-primary mr-1">Tag1</span>
-                            <span class="badge badge-primary mr-1">Tag2</span>
-                            <span class="badge badge-primary mr-1">Tag3</span>
-                            <span class="badge badge-primary mr-1">Tag4</span>
-                            <span class="badge badge-primary mr-1">Tag5</span>
-                            <span class="badge badge-primary mr-1">Tag6</span>
-                            <span class="badge badge-primary mr-1">Tag7</span>
-                            <span class="badge badge-primary mr-1">Tag8</span>
-                            <span class="badge badge-primary mr-1">Tag9</span>
-                        </div>
-                        <div class="row d-flex mt-2">
-                            <div class="col text-warning">
-                                <i class="bi bi-star-fill"></i> : 123
-                            </div>
-                            <div class="col-10">
-                                <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                                    <button type="button" class="btn btn-outline-success active"><i class="bi bi-hand-thumbs-up"></i></button>
-                                    <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
-                                    <button type="button" class="btn btn-outline-secondary"><i class="bi bi-share"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-            </ul>
+                        </li>
+                    }
+
+                </ul>
+            }
+            else
+            {
+                <h1 class="text-mico">Nothing here but us chickens... <i class="bi bi-crosshair"></i></h1>
+            }
         </div>
 
     </div>

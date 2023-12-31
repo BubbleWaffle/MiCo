@@ -64,8 +64,11 @@
                                     </div>
                                     <div class="col-10">
                                         <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                                            <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                                            <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                            @if (thread.id_author != Context.Session.GetInt32("UserId"))
+                                            {
+                                                <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                                <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                            }
                                             <button type="button" class="btn btn-outline-secondary"><i class="bi bi-share"></i></button>
                                         </div>
                                     </div>
