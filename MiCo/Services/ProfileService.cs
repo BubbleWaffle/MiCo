@@ -182,6 +182,15 @@ namespace MiCo.Services
             {
                 user.status = -1;
 
+                var threadsToSoftDelete = _context.threads
+                    .Where(t => t.id_author == user.id && !t.deleted);
+
+                foreach (var thread in threadsToSoftDelete)
+                {
+                    thread.deleted = true;
+                    _context.threads.Update(thread);
+                }
+
                 _context.users.Update(user);
                 await _context.SaveChangesAsync();
 

@@ -64,6 +64,15 @@ namespace MiCo.Services
             if (existing_ban != null)
                 return new ResultHelper(false, "User is already banned!");
 
+            var threadsToSoftDelete = _context.threads
+                .Where(t => t.id_author == banned_user.id && !t.deleted);
+
+            foreach (var thread in threadsToSoftDelete)
+            {
+                thread.deleted = true;
+                _context.threads.Update(thread);
+            }
+
             var reportsToDelete = _context.reports.Where(r => r.id_reported_user == banned_user.id);
             _context.reports.RemoveRange(reportsToDelete);
 

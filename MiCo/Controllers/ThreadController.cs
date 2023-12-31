@@ -21,7 +21,7 @@ namespace MiCo.Controllers
         {
             var thread = _context.threads.FirstOrDefault(t => t.id == id);
 
-            if (thread == null)
+            if (thread == null || thread.deleted || thread.id_reply != null || thread.id_OG_thread != null)
                 return RedirectToAction("Index", "Home");
 
             return View();
