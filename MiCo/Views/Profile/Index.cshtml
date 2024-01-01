@@ -103,7 +103,7 @@
                                     </div>
                                     <div class="col-10">
                                         <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                                            @if (thread.id_author != Context.Session.GetInt32("UserId"))
+                                            @if (thread.id_author != Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
                                             {
                                                 <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
                                                 <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>

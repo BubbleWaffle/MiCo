@@ -146,5 +146,37 @@ namespace MiCo.Services
 
             return new ResultHelper(false, "You can't do that!");
         }
+
+        /// <summary>
+        /// Method used to load OG thread in Thread view
+        /// </summary>
+        /// <param name="id">OG thread id</param>
+        /// <returns>Thread with data</returns>
+        public async Task<Threads> OGThreadContent(int id)
+        {
+            var ogThread = await _context.threads
+                .Include(t => t.author)
+                .Include(t => t.thread_images)
+                .FirstOrDefaultAsync(t => t.id == id);
+
+            return ogThread!;
+        }
+
+        /// <summary>
+        /// Method used to load list of thread replies
+        /// </summary>
+        /// <param name="id">OG thread id</param>
+        /// <returns>List of threads with data</returns>
+        public async Task<List<Threads>> RepliesContent(int id)
+        {
+            var replies = await _context.threads
+                .Include(t => t.author)
+                .Include(t => t.thread_images)
+                .Where(t => t.id_OG_thread == id)
+                .OrderBy(t => t.creation_date)
+                .ToListAsync();
+
+            return replies;
+        }
     }
 }

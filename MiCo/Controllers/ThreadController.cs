@@ -24,7 +24,11 @@ namespace MiCo.Controllers
             if (thread == null || thread.deleted || thread.id_reply != null || thread.id_OG_thread != null)
                 return RedirectToAction("Index", "Home");
 
-            return View();
+            var result = new ThreadViewModel();
+            result._OGThread = await _threadService.OGThreadContent(thread.id);
+            result._replies = await _threadService.RepliesContent(thread.id);
+
+            return View(result);
         }
 
         /// <summary>

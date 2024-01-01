@@ -1,5 +1,6 @@
-﻿@{
-    ViewData["Title"] = "Thread - ";
+﻿@model MiCo.Models.ViewModels.ThreadViewModel
+@{
+    ViewData["Title"] = Model._OGThread.title + " - ";
 }
 <div class="container">
 
@@ -87,19 +88,38 @@
 
     <!-- Main thread -->
     <div class="row">
-        <h3>Title</h3>
+        <h3>@Model._OGThread.title</h3>
     </div>
     <div class="row align-item-center justify-content-start mt-2">
         <div class="col-auto p-0">
-            <img class="flex-shrink-0 rounded-circle avatar" src="https://via.placeholder.com/50" alt="Generic placeholder image">
+            @if (Model._OGThread.author.pfp != null)
+            {
+                <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@Model._OGThread.author.login"><img class="mr-3 flex-shrink-0 rounded-circle wall-of-fame-img border" src="@Model._OGThread.author.pfp" alt="Generic placeholder image"></a>
+            }
+            else
+            {
+                <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@Model._OGThread.author.login"><img class="mr-3 flex-shrink-0 rounded-circle wall-of-fame-img border" src="../content/default/pfp_default.svg" alt="Generic placeholder image"></a>
+            }
         </div>
         <div class="col d-flex align-items-center justify-content-start p-0 ps-2 pt-2">
-            <h6>Nickname <span class="badge rounded-pill text-bg-warning">MOD</span> <small class="text-muted">#Login</small></h6>
+            <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@Model._OGThread.author.login">
+                <h6>
+                    @Model._OGThread.author.nickname
+                    @if (Model._OGThread.author.role == 1)
+                    {
+                        <span class="badge rounded-pill text-bg-warning">MOD</span>
+                    }
+                    <small class="text-muted">#@Model._OGThread.author.login</small>
+                </h6>
+            </a>
         </div>
         <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
-            <button type="button" class="btn btn-mico btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
-            <button type="button" class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalDelete">Delete</button>
-            <small>Date</small>
+            @if (Model._OGThread.id_author == Context.Session.GetInt32("UserId"))
+            {
+                <button type="button" class="btn btn-mico btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
+                <button type="button" class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalDelete">Delete</button>
+            }
+            <small>@Model._OGThread.creation_date.UtcDateTime</small>
         </div>
     </div>
     <div class="row">
@@ -108,22 +128,30 @@
         </div>
         <div class="col d-flex flex-column">
             <p class="align-items-start border rounded p-1 m-1 bg-secondary bg-opacity-10">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ut volutpat sapien, aliquet vestibulum odio. Mauris laoreet porttitor nibh eu ultrices. Maecenas quis sodales ex, feugiat efficitur nisl. Nulla et metus tellus. Etiam turpis tortor, eleifend nec est a, dapibus iaculis erat. Sed commodo, sem non lacinia scelerisque, eros metus mollis enim, sit amet placerat dolor lacus vel mauris. Integer consequat nisi purus, in pretium tellus interdum at.
-                Pellentesque id dignissim sapien, sit amet aliquam ipsum. Praesent et nibh auctor, rutrum felis a, facilisis nulla. Praesent quis eleifend ante, sed facilisis nisi. Aenean porta risus at tempor viverra. In finibus tincidunt magna eu convallis. Duis sed sagittis libero. Donec vel gravida metus. Cras feugiat mi ut mi vulputate, et aliquam metus sollicitudin.
+                @Model._OGThread.description
             </p>
-            <div class="row d-grid justify-content-center align-items-center mb-2">
-                <img class="flex-shrink-0 mt-2" src="https://via.placeholder.com/768x350" alt="Generic placeholder image">
-                <img class="flex-shrink-0 mt-2" src="https://via.placeholder.com/768x350" alt="Generic placeholder image">
-                <img class="flex-shrink-0 mt-2" src="https://via.placeholder.com/768x350" alt="Generic placeholder image">
-            </div>
+            @if (Model._OGThread.thread_images != null && Model._OGThread.thread_images.Any())
+            {
+                <div class="row d-grid justify-content-center align-items-center mb-2">
+                    <div class="text-center">
+                        @foreach (var image in Model._OGThread.thread_images)
+                        {
+                            <img class="flex-shrink-0 mt-2 w-50 h-auto" src="@image.image" alt="Thread Image">
+                        }
+                    </div>
+                </div>
+            }
             <div class="row d-flex">
                 <div class="col-auto text-warning">
                     <i class="bi bi-star-fill"></i> : 123
                 </div>
                 <div class="col-10">
                     <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                        <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                        <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                        @if (Model._OGThread.id_author != Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
+                        {
+                            <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                            <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                        }
                         <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#exampleModalReply"><i class="bi bi-chat-left-dots"></i></button>
                     </div>
                 </div>
