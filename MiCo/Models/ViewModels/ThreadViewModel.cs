@@ -3,6 +3,6 @@
     public class ThreadViewModel
     {
         public Threads _OGThread { get; set; } = null!;
-        public List<Threads> _replies { get; set; } = null!;
+        public List<ThreadViewModel> _replies { get; set; } = new List<ThreadViewModel>();
     }
 }

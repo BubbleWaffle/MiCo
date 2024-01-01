@@ -9,11 +9,11 @@ namespace MiCo.Models
 
         [ForeignKey("reported_user")]
         public int id_reported_user { get; set; }
-        public Users reported_user { get; set; } = null!;
+        public virtual Users reported_user { get; set; } = null!;
 
         [ForeignKey("reporting_user")]
         public int id_reporting_user { get; set; }
-        public Users reporting_user { get; set; } = null!;
+        public virtual Users reporting_user { get; set; } = null!;
 
         [Required]
         public string reason { get; set; } = null!;

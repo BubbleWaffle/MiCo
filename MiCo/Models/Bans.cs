@@ -9,11 +9,11 @@ namespace MiCo.Models
 
         [ForeignKey("banned_user")]
         public int id_banned_user { get; set; }
-        public Users banned_user { get; set; } = null!;
+        public virtual Users banned_user { get; set; } = null!;
 
         [ForeignKey("moderator")]
         public int id_moderator { get; set; }
-        public Users moderator { get; set; } = null!;
+        public virtual Users moderator { get; set; } = null!;
 
         [Required]
         public string reason { get; set; } = null!;

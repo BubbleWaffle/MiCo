@@ -167,16 +167,106 @@ namespace MiCo.Services
         /// </summary>
         /// <param name="id">OG thread id</param>
         /// <returns>List of threads with data</returns>
-        public async Task<List<Threads>> RepliesContent(int id)
+        public async Task<List<ThreadViewModel>> RepliesContent(int id)
         {
             var replies = await _context.threads
                 .Include(t => t.author)
                 .Include(t => t.thread_images)
-                .Where(t => t.id_OG_thread == id)
+                .Where(t => t.id_reply == id)
                 .OrderBy(t => t.creation_date)
                 .ToListAsync();
 
-            return replies;
+            var result = new List<ThreadViewModel>();
+
+            foreach (var reply in replies)
+            {
+                var replyViewModel = new ThreadViewModel
+                {
+                    _OGThread = reply,
+                    _replies = await RepliesContent(reply.id) // Recursion
+                };
+
+                result.Add(replyViewModel);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Method used to reply
+        /// </summary>
+        /// <param name="reply_id">Thread id to replying</param>
+        /// <param name="user_id">Replying user id</param>
+        /// <param name="model">View model passing registration data</param>
+        /// <returns>Helper reporting success or error</returns>
+        public async Task<ResultHelper> ThreadReply(int reply_id, int? user_id, ThreadReplyViewModel model)
+        {
+            var reply_thread = _context.threads.FirstOrDefault(o => o.id == reply_id);
+
+            if (model != null && user_id != null && reply_thread != null)
+            {
+                if (string.IsNullOrWhiteSpace(model.reply_description))
+                    return new ResultHelper(false, "Description can't be empty!");
+
+                if (model.reply_description.Length > 500)
+                    return new ResultHelper(false, "Description is too long (MAX 500 characters)!");
+
+                if (model.reply_files != null && model.reply_files.Count > 3)
+                    return new ResultHelper(false, "You can send only 3 files!");
+
+                var thread = new Threads
+                {
+                    id_author = user_id.Value,
+                    id_reply = reply_thread.id,
+                    id_OG_thread = reply_thread.id_OG_thread ?? reply_thread.id,
+                    title = reply_thread.title,
+                    description = model.reply_description,
+                    creation_date = DateTimeOffset.Now,
+                    deleted = false
+                };
+
+                _context.threads.Add(thread);
+                await _context.SaveChangesAsync();
+
+                if (model.reply_files != null && model.reply_files.Count > 0)
+                {
+                    string threadFolderName = thread.id.ToString();
+                    string threadFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "thread", threadFolderName);
+
+                    if (!Directory.Exists(threadFolder))
+                        Directory.CreateDirectory(threadFolder);
+
+                    int counter = 1;
+
+                    foreach (var file in model.reply_files)
+                    {
+                        string uniqueFileName = $"{counter}{Path.GetExtension(file.FileName)}";
+                        string filePath = Path.Combine(threadFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+
+                        var image = new Images
+                        {
+                            id_which_thread = thread.id,
+                            image = $"../content/thread/{threadFolderName}/{uniqueFileName}"
+                        };
+
+                        _context.images.Add(image);
+                        await _context.SaveChangesAsync();
+
+                        counter++;
+                    }
+                }
+
+                int no_nullable = thread.id_OG_thread ?? default(int);
+
+                return new ResultHelper(true, "Replied successfully!", no_nullable);
+            }
+
+            return new ResultHelper(false, "You can't do that!");
         }
     }
 }

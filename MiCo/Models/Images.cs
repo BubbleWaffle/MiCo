@@ -9,7 +9,7 @@ namespace MiCo.Models
 
         [ForeignKey("which_thread")]
         public int id_which_thread { get; set; }
-        public Threads which_thread { get; set; } = null!;
+        public virtual Threads which_thread { get; set; } = null!;
 
         [Required]
         public string image { get; set; } = null!;

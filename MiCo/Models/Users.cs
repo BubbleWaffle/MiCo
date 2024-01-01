@@ -29,6 +29,6 @@ namespace MiCo.Models
         [Required]
         public int status { get; set; }
 
-        public List<Threads>? user_threads { get; set; }
+        public virtual List<Threads>? user_threads { get; set; }
     }
 }

@@ -8,6 +8,7 @@ namespace MiCo.Services
     {
         Task<ResultHelper> ThreadCreate(int? id, ThreadCreateViewModel model);
         Task<Threads> OGThreadContent(int id);
-        Task<List<Threads>> RepliesContent(int id);
+        Task<List<ThreadViewModel>> RepliesContent(int id);
+        Task<ResultHelper> ThreadReply(int OG_Thread_id, int? user_id, ThreadReplyViewModel model);
     }
 }

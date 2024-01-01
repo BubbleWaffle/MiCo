@@ -7,10 +7,10 @@ namespace MiCo.Models
     {
         [ForeignKey("thread")]
         public int id_thread { get; set; }
-        public Threads thread { get; set; } = null!;
+        public virtual Threads thread { get; set; } = null!;
 
         [ForeignKey("tag")]
         public int id_tag { get; set; }
-        public Tags tag { get; set; } = null!;
+        public virtual Tags tag { get; set; } = null!;
     }
 }

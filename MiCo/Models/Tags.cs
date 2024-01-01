@@ -9,6 +9,6 @@ namespace MiCo.Models
         [Required]
         public string tag { get; set; } = null!;
 
-        public List<ThreadTags> thread_tags { get; set; } = null!;
+        public virtual List<ThreadTags> thread_tags { get; set; } = null!;
     }
 }

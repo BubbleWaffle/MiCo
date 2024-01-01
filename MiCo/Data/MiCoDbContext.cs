@@ -66,6 +66,12 @@ namespace MiCo.Data
             base.OnModelCreating(modelBuilder);
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLazyLoadingProxies();
+            base.OnConfiguring(optionsBuilder);
+        }
+
         public DbSet<Users> users { get; set; }
         public DbSet<Reports> reports { get; set; }
         public DbSet<Bans> bans { get; set; }

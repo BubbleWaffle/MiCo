@@ -16,6 +16,11 @@ namespace MiCo.Controllers
             _threadService = threadService;
         }
 
+        /// <summary>
+        /// Method used to render Thread view
+        /// </summary>
+        /// <param name="id">Id OG Thread</param>
+        /// <returns>Create view with data</returns>
         [HttpGet("/Thread/ThreadNo={id}")]
         public async Task<IActionResult> Index([FromRoute(Name = "id")] int id)
         {
@@ -25,8 +30,8 @@ namespace MiCo.Controllers
                 return RedirectToAction("Index", "Home");
 
             var result = new ThreadViewModel();
-            result._OGThread = await _threadService.OGThreadContent(thread.id);
-            result._replies = await _threadService.RepliesContent(thread.id);
+            result._OGThread = thread;
+            result._replies = await _threadService.RepliesContent(id);
 
             return View(result);
         }
@@ -54,6 +59,48 @@ namespace MiCo.Controllers
             if (ModelState.IsValid) 
             {
                 var result = await _threadService.ThreadCreate(HttpContext.Session.GetInt32("UserId"), model);
+
+                if (result.RHsuccess)
+                {
+                    return RedirectToAction("Index", new { id = result.RHno });
+                }
+                else
+                {
+                    ModelState.AddModelError("", result.RHmessage);
+                }
+            }
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Method used to render reply view
+        /// </summary>
+        /// <param name="id">Id thread to reply</param>
+        /// <returns>Reply view or redirect to Home view</returns>
+        [HttpGet("/Thread/Reply={id}")]
+        public IActionResult Reply([FromRoute(Name = "id")] int id) 
+        { 
+            var thredExists = _context.threads.FirstOrDefault(t => t.id == id);
+
+            if (!HttpContext.Session.TryGetValue("UserId", out _) || thredExists == null)
+                return RedirectToAction("Index", "Home");
+
+            return View();
+        }
+
+        /// <summary>
+        /// Method used to reply
+        /// </summary>
+        /// <param name="id">Id thread to reply</param>
+        /// <param name="model">View model passing reply data to service</param>
+        /// <returns>Reply view with error or redirect to thread view</returns>
+        [HttpPost("/Thread/Reply={id}")]
+        public async Task<IActionResult> Reply([FromRoute(Name = "id")] int id, ThreadReplyViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _threadService.ThreadReply(id, HttpContext.Session.GetInt32("UserId"), model);
 
                 if (result.RHsuccess)
                 {
