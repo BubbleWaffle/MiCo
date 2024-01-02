@@ -4,6 +4,7 @@ using MiCo.Models.ViewModels;
 using MiCo.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Text.RegularExpressions;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace MiCo.Services
 {
@@ -147,6 +148,12 @@ namespace MiCo.Services
             return new ResultHelper(false, "You can't do that!");
         }
 
+        /// <summary>
+        /// Method used to load OG Thread data
+        /// </summary>
+        /// <param name="id">OG Thread id</param>
+        /// <param name="userId">User id</param>
+        /// <returns>ViewModel with data</returns>
         public async Task<ThreadViewModel> OGThreadContent(int id, int? userId)
         {
             var og_thread = await _context.threads
@@ -154,15 +161,24 @@ namespace MiCo.Services
                 .Include(t => t.thread_images)
                 .FirstOrDefaultAsync(t => t.id == id);
 
+            var score = await GetScore(id);
+
             var result = new ThreadViewModel
             {
                 _OGThread = og_thread!,
-                LikeDislikeStatus = userId.HasValue ? await GetUserLikeDislikeStatus(id, userId.Value) : 0
+                LikeDislikeStatus = userId.HasValue ? await LikeOrDislike(id, userId.Value) : 0,
+                _score = score
             };
 
             return result;
         }
 
+        /// <summary>
+        /// Method used to load sub-threads/replies
+        /// </summary>
+        /// <param name="id">Thread id to reply</param>
+        /// <param name="userId">User id</param>
+        /// <returns>List with replies</returns>
         public async Task<List<ThreadViewModel>> RepliesContent(int id, int? userId)
         {
             var replies = await _context.threads
@@ -176,11 +192,13 @@ namespace MiCo.Services
 
             foreach (var reply in replies)
             {
+                var score = await GetScore(reply.id);
                 var replyViewModel = new ThreadViewModel
                 {
                     _OGThread = reply,
                     _replies = await RepliesContent(reply.id, userId),
-                    LikeDislikeStatus = userId.HasValue ? await GetUserLikeDislikeStatus(reply.id, userId.Value) : 0
+                    LikeDislikeStatus = userId.HasValue ? await LikeOrDislike(reply.id, userId.Value) : 0,
+                    _score = score
                 };
 
                 result.Add(replyViewModel);
@@ -189,7 +207,13 @@ namespace MiCo.Services
             return result;
         }
 
-        public async Task<int> GetUserLikeDislikeStatus(int threadId, int userId)
+        /// <summary>
+        /// Method used to get Like or Dislike
+        /// </summary>
+        /// <param name="threadId">Thread id</param>
+        /// <param name="userId">User id</param>
+        /// <returns>Status (1 -> like; -1 -> dislike)</returns>
+        public async Task<int> LikeOrDislike(int threadId, int userId)
         {
             var like = await _context.likes
                 .Where(l => l.id_thread == threadId && l.id_user == userId)
@@ -197,6 +221,19 @@ namespace MiCo.Services
                 .FirstOrDefaultAsync();
 
             return like;
+        }
+
+        /// <summary>
+        /// Method of calculating score
+        /// </summary>
+        /// <param name="threadId">Thread id</param>
+        /// <returns>Score</returns>
+        private async Task<int> GetScore(int threadId)
+        {
+            var likesCount = await _context.likes.CountAsync(l => l.id_thread == threadId && l.like_or_dislike == 1);
+            var dislikesCount = await _context.likes.CountAsync(l => l.id_thread == threadId && l.like_or_dislike == -1);
+
+            return likesCount - dislikesCount;
         }
 
         /// <summary>
