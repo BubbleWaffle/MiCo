@@ -147,27 +147,23 @@ namespace MiCo.Services
             return new ResultHelper(false, "You can't do that!");
         }
 
-        /// <summary>
-        /// Method used to load OG thread in Thread view
-        /// </summary>
-        /// <param name="id">OG thread id</param>
-        /// <returns>Thread with data</returns>
-        public async Task<Threads> OGThreadContent(int id)
+        public async Task<ThreadViewModel> OGThreadContent(int id, int? userId)
         {
-            var ogThread = await _context.threads
+            var og_thread = await _context.threads
                 .Include(t => t.author)
                 .Include(t => t.thread_images)
                 .FirstOrDefaultAsync(t => t.id == id);
 
-            return ogThread!;
+            var result = new ThreadViewModel
+            {
+                _OGThread = og_thread!,
+                LikeDislikeStatus = userId.HasValue ? await GetUserLikeDislikeStatus(id, userId.Value) : 0
+            };
+
+            return result;
         }
 
-        /// <summary>
-        /// Method used to load list of thread replies
-        /// </summary>
-        /// <param name="id">OG thread id</param>
-        /// <returns>List of threads with data</returns>
-        public async Task<List<ThreadViewModel>> RepliesContent(int id)
+        public async Task<List<ThreadViewModel>> RepliesContent(int id, int? userId)
         {
             var replies = await _context.threads
                 .Include(t => t.author)
@@ -183,13 +179,92 @@ namespace MiCo.Services
                 var replyViewModel = new ThreadViewModel
                 {
                     _OGThread = reply,
-                    _replies = await RepliesContent(reply.id) // Recursion
+                    _replies = await RepliesContent(reply.id, userId),
+                    LikeDislikeStatus = userId.HasValue ? await GetUserLikeDislikeStatus(reply.id, userId.Value) : 0
                 };
 
                 result.Add(replyViewModel);
             }
 
             return result;
+        }
+
+        public async Task<int> GetUserLikeDislikeStatus(int threadId, int userId)
+        {
+            var like = await _context.likes
+                .Where(l => l.id_thread == threadId && l.id_user == userId)
+                .Select(l => l.like_or_dislike)
+                .FirstOrDefaultAsync();
+
+            return like;
+        }
+
+        /// <summary>
+        /// Method used to like or cancel like
+        /// </summary>
+        /// <param name="id">Thread id</param>
+        /// <param name="user_id">User id</param>
+        /// <returns>Do task</returns>
+        public async Task ThreadLike(int? id, int? user_id)
+        {
+            int no_nullable_user_id = user_id ?? default(int);
+            if (id.HasValue)
+            {
+                var existingLike = _context.likes.FirstOrDefault(l => l.id_thread == id && l.id_user == no_nullable_user_id);
+
+                if (existingLike != null)
+                {
+                    existingLike.like_or_dislike = existingLike.like_or_dislike == 1 ? 0 : 1; // If like change to 0; if dislike change to 1
+                    _context.Update(existingLike);
+                }
+                else
+                {
+                    var newLike = new Likes
+                    {
+                        id_user = no_nullable_user_id,
+                        id_thread = id.Value,
+                        like_or_dislike = 1
+                    };
+
+                    _context.Add(newLike);
+                }
+
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        /// <summary>
+        /// Method used to dislike or cancel dislike
+        /// </summary>
+        /// <param name="id">Thread id</param>
+        /// <param name="user_id">User id</param>
+        /// <returns>Do task</returns>
+        public async Task ThreadDislike(int? id, int? user_id)
+        {
+            int no_nullable_user_id = user_id ?? default(int);
+            if (id.HasValue)
+            {
+                var existingLike = _context.likes.FirstOrDefault(l => l.id_thread == id && l.id_user == no_nullable_user_id);
+
+                if (existingLike != null)
+                {
+                    existingLike.like_or_dislike = existingLike.like_or_dislike == -1 ? 0 : -1; // If dislike change to 0; if like change to -1
+                    _context.Update(existingLike);
+                }
+                else
+                {
+                    var newLike = new Likes
+                    {
+                        id_user = no_nullable_user_id,
+                        id_thread = id.Value,
+                        like_or_dislike = -1
+                    };
+
+                    _context.Add(newLike);
+                }
+
+                await _context.SaveChangesAsync();
+            }
         }
 
         /// <summary>

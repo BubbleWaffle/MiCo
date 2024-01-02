@@ -75,17 +75,39 @@
                     <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
                         @if (Model._OGThread.id_author != Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
                         {
-                            <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                            <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                            <form asp-controller="Thread" asp-action="Index" method="post">
+                                <input type="hidden" asp-for="id_liked_thread" value="@Model._OGThread.id" />
+                                <input type="hidden" asp-for="id_disliked_thread"/>
+                                @if (Model.LikeDislikeStatus == 1)
+                                {
+                                    <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                }
+                            </form>
+                            <form asp-controller="Thread" asp-action="Index" method="post">
+                                <input type="hidden" asp-for="id_liked_thread"/>
+                                <input type="hidden" asp-for="id_disliked_thread" value="@Model._OGThread.id" />
+                                @if (Model.LikeDislikeStatus == -1)
+                                {
+                                    <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                }
+                                else
+                                {
+                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                }
+                            </form>
                         }
 
                         @if (Context.Session.TryGetValue("UserId", out _))
                         {
-                            <a type="button" class="btn btn-outline-secondary" asp-controller="Thread" asp-action="Reply" asp-route-id="@Model._OGThread.id"><i class="bi bi-chat-left-dots"></i></a>
+                            <a type="button" class="btn btn-sm btn-outline-secondary" asp-controller="Thread" asp-action="Reply" asp-route-id="@Model._OGThread.id"><i class="bi bi-chat-left-dots"></i></a>
                         }
                         else
                         {
-                            <a type="button" class="btn btn-outline-secondary" asp-controller="Authorization" asp-action="Login"><i class="bi bi-chat-left-dots"></i></a>
+                            <a type="button" class="btn btn-sm btn-outline-secondary" asp-controller="Authorization" asp-action="Login"><i class="bi bi-chat-left-dots"></i></a>
                         }
                     </div>
                 </div>
@@ -172,8 +194,30 @@
                                         <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
                                             @if (reply._OGThread.id_author != Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
                                             {
-                                                <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                                                <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                                <form asp-controller="Thread" asp-action="Index" method="post">
+                                                    <input type="hidden" asp-for="id_liked_thread" value="@reply._OGThread.id" />
+                                                    <input type="hidden" asp-for="id_disliked_thread" />
+                                                    @if (reply.LikeDislikeStatus == 1)
+                                                    {
+                                                        <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                                    }
+                                                </form>
+                                                <form asp-controller="Thread" asp-action="Index" method="post">
+                                                    <input type="hidden" asp-for="id_liked_thread" />
+                                                    <input type="hidden" asp-for="id_disliked_thread" value="@reply._OGThread.id" />
+                                                    @if (reply.LikeDislikeStatus == -1)
+                                                    {
+                                                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                                    }
+                                                </form>
                                             }
 
                                             @if (Context.Session.TryGetValue("UserId", out _))

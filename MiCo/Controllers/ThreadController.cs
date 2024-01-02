@@ -29,11 +29,27 @@ namespace MiCo.Controllers
             if (thread == null || thread.deleted || thread.id_reply != null || thread.id_OG_thread != null)
                 return RedirectToAction("Index", "Home");
 
-            var result = new ThreadViewModel();
-            result._OGThread = thread;
-            result._replies = await _threadService.RepliesContent(id);
+            var user_id = HttpContext.Session.GetInt32("UserId");
+
+            var result = await _threadService.OGThreadContent(id, user_id);
+            result._replies = await _threadService.RepliesContent(id, user_id);
 
             return View(result);
+        }
+
+        /// <summary>
+        /// Method used to liked or dislike threads
+        /// </summary>
+        /// <param name="id">Id OG Thread</param>
+        /// <param name="model">View model passing like or dislike data to service</param>
+        /// <returns>Redirect to main Thread view</returns>
+        [HttpPost("/Thread/ThreadNo={id}")]
+        public async Task<IActionResult> Index([FromRoute(Name = "id")] int id, ThreadViewModel model)
+        {
+            if (model.id_liked_thread != null) await _threadService.ThreadLike(model.id_liked_thread, HttpContext.Session.GetInt32("UserId"));
+            if (model.id_disliked_thread != null) await _threadService.ThreadDislike(model.id_disliked_thread, HttpContext.Session.GetInt32("UserId"));
+
+            return RedirectToAction("Index", new { id = id });
         }
 
         /// <summary>
