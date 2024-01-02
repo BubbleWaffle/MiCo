@@ -20,7 +20,7 @@ namespace MiCo.Services
         /// <param name="search">String entered to searchbar</param>
         /// <param name="sort_option">Sort option</param>
         /// <returns>List of threads to controller</returns>
-        public async Task<List<Threads>> HomeThreads(string search, string sort_option)
+        public async Task<List<ThreadsAndScoreViewModel>> HomeThreads(string search, string sort_option)
         {
             var threadsQuery = _context.threads
                 .Include(t => t.author)
@@ -41,6 +41,8 @@ namespace MiCo.Services
                 .OrderByDescending(t => t.creation_date)
                 .ToListAsync();
 
+            var homeThreadsList = new List<ThreadsAndScoreViewModel>();
+
             foreach (var thread in threadsList)
             {
                 var image = await _context.images
@@ -48,9 +50,30 @@ namespace MiCo.Services
                     .FirstOrDefaultAsync();
 
                 if (image != null) thread.thread_images = new List<Images> { image };
+
+                var score = await GetScore(thread.id);
+
+                homeThreadsList.Add(new ThreadsAndScoreViewModel
+                {
+                    _score = score,
+                    _thread = thread
+                });
             }
 
-            return threadsList;
+            return homeThreadsList;
+        }
+
+        /// <summary>
+        /// Method of calculating score
+        /// </summary>
+        /// <param name="threadId">Thread id</param>
+        /// <returns>Score</returns>
+        private async Task<int> GetScore(int threadId)
+        {
+            var likesCount = await _context.likes.CountAsync(l => l.id_thread == threadId && l.like_or_dislike == 1);
+            var dislikesCount = await _context.likes.CountAsync(l => l.id_thread == threadId && l.like_or_dislike == -1);
+
+            return likesCount - dislikesCount;
         }
 
         /// <summary>

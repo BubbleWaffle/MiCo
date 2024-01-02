@@ -24,10 +24,10 @@
             </div>
             <div class="col d-flex justify-content-center">
                 <div class="text-warning me-2">
-                    <i class="bi bi-star-fill"></i> Score: 123
+                    <i class="bi bi-star-fill"></i> Score: @Model._profileContent.score
                 </div>
                 <div class="text-mico ms-2">
-                    <i class="bi bi-list-ol"></i> Threads: 37
+                    <i class="bi bi-list-ol"></i> Threads: @Model._profileContent.number_of_threads
                 </div>
             </div>
             <div class="col mt-2">
@@ -68,30 +68,30 @@
                     @foreach (var thread in Model._profileThreads)
                     {
                         <li class="media border d-flex align-items-center p-2">
-                            @if (thread.thread_images != null && thread.thread_images.Count > 0)
+                            @if (thread._thread.thread_images != null && thread._thread.thread_images.Count > 0)
                             {
-                                var firstImage = thread.thread_images[0];
-                                <a asp-controller="Thread" asp-action="Index" asp-route-id="@thread.id"><img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="@firstImage.image" alt="Generic placeholder image"></a>
+                                var firstImage = thread._thread.thread_images[0];
+                                <a asp-controller="Thread" asp-action="Index" asp-route-id="@thread._thread.id"><img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="@firstImage.image" alt="Generic placeholder image"></a>
                             }
                             else
                             {
-                                <a asp-controller="Thread" asp-action="Index" asp-route-id="@thread.id"><img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="../content/default/empt_default.svg" alt="Generic placeholder image"></a>
+                                <a asp-controller="Thread" asp-action="Index" asp-route-id="@thread._thread.id"><img class="mr-3 flex-shrink-0 threads-list-img border rounded" src="../content/default/empt_default.svg" alt="Generic placeholder image"></a>
                             }
                             <div class="media-body px-3 text-truncate w-100">
                                 <div class="row">
                                     <div class="col">
-                                        <a class="text-decoration-none" asp-controller="Thread" asp-action="Index" asp-route-id="@thread.id"><h5 class="mt-0 mb-1">@thread.title</h5></a>
-                                        <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@thread.author.login"><small>Author: @thread.author.login</small></a>
+                                        <a class="text-decoration-none" asp-controller="Thread" asp-action="Index" asp-route-id="@thread._thread.id"><h5 class="mt-0 mb-1">@thread._thread.title</h5></a>
+                                        <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@thread._thread.author.login"><small>Author: @thread._thread.author.login</small></a>
                                     </div>
                                     <div class="col d-flex flex-row-reverse">
-                                        <small class="text-decoration-underline">@thread.creation_date.UtcDateTime</small>
+                                        <small class="text-decoration-underline">@thread._thread.creation_date.UtcDateTime</small>
                                     </div>
                                 </div>
-                                @thread.description
-                                @if (thread.thread_tags != null)
+                                @thread._thread.description
+                                @if (thread._thread.thread_tags != null)
                                 {
                                     <div class="tags-container d-flex flex-wrap mt-2">
-                                        @foreach (var tag in thread.thread_tags)
+                                        @foreach (var tag in thread._thread.thread_tags)
                                         {
                                             <a class="text-decoration-none text-reset" asp-controller="Home" asp-action="Index" asp-route-search="@tag.tag.tag"><span class="badge badge-primary mr-1">@tag.tag.tag</span></a>
                                         }
@@ -99,17 +99,7 @@
                                 }
                                 <div class="row d-flex mt-2">
                                     <div class="col text-warning">
-                                        <i class="bi bi-star-fill"></i> : 123
-                                    </div>
-                                    <div class="col-10">
-                                        <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                                            @if (thread.id_author != Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
-                                            {
-                                                <button type="button" class="btn btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                                                <button type="button" class="btn btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
-                                            }
-                                            <button type="button" class="btn btn-outline-secondary"><i class="bi bi-share"></i></button>
-                                        </div>
+                                        <i class="bi bi-star-fill"></i> : @thread._score
                                     </div>
                                 </div>
                             </div>

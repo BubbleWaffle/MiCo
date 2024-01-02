@@ -21,10 +21,10 @@ namespace MiCo.Controllers
         /// <param name="search">Key word used for search</param>
         /// <param name="sort_option">Sort option (Latest or Hot)</param>
         /// <returns>Home view with loaded threads and top users</returns>
-        public async Task<IActionResult> Index([FromQuery] string search, string sort_option)
+        public async Task<IActionResult> Index([FromQuery] string search,[FromQuery] string sort_option)
         {
             var result = new HomeViewModel();
-            result._threads = await _homeService.HomeThreads(search, sort_option);
+            result._listOfThreads = await _homeService.HomeThreads(search, sort_option);
             result._topUsers = await _homeService.HomeWOF(3);
 
             return View(result);

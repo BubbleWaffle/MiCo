@@ -6,6 +6,6 @@ namespace MiCo.Models.ViewModels
     {
         [Required]
         public ProfileContentViewModel _profileContent { get; set; } = null!;
-        public List<Threads> _profileThreads { get; set; } = null!;
+        public List<ThreadsAndScoreViewModel> _profileThreads { get; set; } = null!;
     }
 }

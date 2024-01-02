@@ -24,14 +24,21 @@ namespace MiCo.Services
         /// </summary>
         /// <param name="login">User account name passing by URL</param>
         /// <returns>ProfileContentViewModel with data</returns>
-        public Task<ProfileContentViewModel> ProfileContent(string? login)
+        public async Task<ProfileContentViewModel> ProfileContent(string? login)
         {
             var user = _context.users.FirstOrDefault(u => u.login == login);
 
             if (user == null)
-                return Task.FromResult(new ProfileContentViewModel());
+                return new ProfileContentViewModel();
 
             string pfp_url = user.pfp ?? "../content/default/pfp_default.svg";
+
+            int threads = await _context.threads
+                .CountAsync(t => t.author.login == login && !t.deleted);
+
+            int fullScore = await _context.likes
+                .Where(l => l.user.login == login && !l.thread.deleted)
+                .SumAsync(l => l.like_or_dislike);
 
             var profileContentViewModel = new ProfileContentViewModel
             {
@@ -39,13 +46,15 @@ namespace MiCo.Services
                 login = user.login,
                 creation_date = user.creation_date.DateTime,
                 pfp = pfp_url,
-                role = user.role
+                role = user.role,
+                number_of_threads = threads,
+                score = fullScore
             };
 
-            return Task.FromResult(profileContentViewModel);
+            return profileContentViewModel;
         }
 
-        public async Task<List<Threads>> ProfileThreads(string? login)
+        public async Task<List<ThreadsAndScoreViewModel>> ProfileThreads(string? login)
         {
             var threadsList = await _context.threads
                 .Include(t => t.author)
@@ -56,7 +65,33 @@ namespace MiCo.Services
                 .OrderBy(t => t.creation_date)
                 .ToListAsync();
 
-            return threadsList;
+            var threadsWithScores = new List<ThreadsAndScoreViewModel>();
+
+            foreach (var thread in threadsList)
+            {
+                var threadViewModel = new ThreadsAndScoreViewModel
+                {
+                    _thread = thread,
+                    _score = await GetScore(thread.id)
+                };
+
+                threadsWithScores.Add(threadViewModel);
+            }
+
+            return threadsWithScores;
+        }
+
+        /// <summary>
+        /// Method of calculating score
+        /// </summary>
+        /// <param name="threadId">Thread id</param>
+        /// <returns>Score</returns>
+        private async Task<int> GetScore(int threadId)
+        {
+            var likesCount = await _context.likes.CountAsync(l => l.id_thread == threadId && l.like_or_dislike == 1);
+            var dislikesCount = await _context.likes.CountAsync(l => l.id_thread == threadId && l.like_or_dislike == -1);
+
+            return likesCount - dislikesCount;
         }
 
         /// <summary>

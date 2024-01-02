@@ -2,7 +2,7 @@
 {
     public class HomeViewModel
     {
-        public List<Threads> _threads { get; set; } = null!;
+        public List<ThreadsAndScoreViewModel> _listOfThreads { get; set; } = null!;
         public List<Users> _topUsers { get; set; } = null!;
     }
 }

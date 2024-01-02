@@ -18,5 +18,11 @@ namespace MiCo.Models.ViewModels
 
         [Required]
         public int role { get; set; }
+
+        [Required]
+        public int number_of_threads { get; set; }
+
+        [Required]
+        public int score { get; set; }
     }
 }
