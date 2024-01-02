@@ -43,7 +43,7 @@
 
             @if ((Model._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _)) || Context.Session.GetInt32("Role") == 1)
             {
-                <button type="button" class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalDelete">Delete</button>
+                <a class="btn btn-danger btn-sm me-2" asp-controller="Thread" asp-action="Delete" asp-route-id="@Model._OGThread.id">Delete</a>
             }
             <small>@Model._OGThread.creation_date.UtcDateTime</small>
         </div>
@@ -129,116 +129,167 @@
         {
             foreach (var reply in replies)
             {
-                <div class="row ms-@(level)">
-                    <div class="col">
-                        <div class="row align-item-center justify-content-start mt-2">
-                            <div class="col-auto p-0">
-                                @if (reply._OGThread.author.pfp != null)
-                                {
-                                    <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@reply._OGThread.author.login"><img class="mr-3 flex-shrink-0 rounded-circle wall-of-fame-img border" src="@reply._OGThread.author.pfp" alt="Generic placeholder image"></a>
-                                }
-                                else
-                                {
-                                    <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@reply._OGThread.author.login"><img class="mr-3 flex-shrink-0 rounded-circle wall-of-fame-img border" src="../content/default/pfp_default.svg" alt="Generic placeholder image"></a>
-                                }
-                            </div>
-                            <div class="col d-flex align-items-center justify-content-start p-0 ps-2 pt-2">
-                                <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@reply._OGThread.author.login">
-                                    <h6>
-                                        @reply._OGThread.author.nickname
-                                        @if (reply._OGThread.author.role == 1)
-                                        {
-                                            <span class="badge rounded-pill text-bg-warning">MOD</span>
-                                        }
-                                        <small class="text-muted">#@reply._OGThread.author.login</small>
-                                    </h6>
-                                </a>
-                            </div>
-                            <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
-                                @if (reply._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
-                                {
-                                    <button type="button" class="btn btn-mico btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
-                                }
-
-                                @if ((reply._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _)) || Context.Session.GetInt32("Role") == 1)
-                                {
-                                    <button type="button" class="btn btn-danger btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalDelete">Delete</button>
-                                }
-                                <small>@reply._OGThread.creation_date.UtcDateTime</small>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-auto d-flex p-0">
-                                <div class="vr vr-size-and-position"></div>
-                            </div>
-                            <div class="col d-flex flex-column">
-                                <p class="align-items-start border rounded p-1 m-1 bg-secondary bg-opacity-10">
-                                    @reply._OGThread.description
-                                </p>
-                                @if (reply._OGThread.thread_images != null && reply._OGThread.thread_images.Any())
-                                {
-                                    <div class="row d-grid justify-content-center align-items-center mb-2">
-                                        <div class="text-center">
-                                            @foreach (var image in reply._OGThread.thread_images)
-                                            {
-                                                <img class="flex-shrink-0 mt-2 w-50 h-auto" src="@image.image" alt="Thread Image">
-                                            }
-                                        </div>
-                                    </div>
-                                }
-                                <div class="row d-flex">
-                                    <div class="col-auto text-warning">
-                                        <i class="bi bi-star-fill"></i> : @reply._score
-                                    </div>
-                                    <div class="col-10">
-                                        <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
-                                            @if (reply._OGThread.id_author != Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
-                                            {
-                                                <form asp-controller="Thread" asp-action="Index" method="post">
-                                                    <input type="hidden" asp-for="id_liked_thread" value="@reply._OGThread.id" />
-                                                    <input type="hidden" asp-for="id_disliked_thread" />
-                                                    @if (reply.LikeDislikeStatus == 1)
-                                                    {
-                                                        <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
-                                                    }
-                                                </form>
-                                                <form asp-controller="Thread" asp-action="Index" method="post">
-                                                    <input type="hidden" asp-for="id_liked_thread" />
-                                                    <input type="hidden" asp-for="id_disliked_thread" value="@reply._OGThread.id" />
-                                                    @if (reply.LikeDislikeStatus == -1)
-                                                    {
-                                                        <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-hand-thumbs-down"></i></button>
-                                                    }
-                                                    else
-                                                    {
-                                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
-                                                    }
-                                                </form>
-                                            }
-
-                                            @if (Context.Session.TryGetValue("UserId", out _))
-                                            {
-                                                <a type="button" class="btn btn-outline-secondary" asp-controller="Thread" asp-action="Reply" asp-route-id="@reply._OGThread.id"><i class="bi bi-chat-left-dots"></i></a>
-                                            }
-                                            else
-                                            {
-                                                <a type="button" class="btn btn-outline-secondary" asp-controller="Authorization" asp-action="Login"><i class="bi bi-chat-left-dots"></i></a>
-                                            }
-                                        </div>
-                                    </div>
+                if (reply._OGThread.deleted != true && reply._OGThread.author.status != -1 && reply._OGThread.author.status != 1)
+                {
+                    <div class="row ms-@(level)">
+                        <div class="col">
+                            <div class="row align-item-center justify-content-start mt-2">
+                                <div class="col-auto p-0">
+                                    @if (reply._OGThread.author.pfp != null)
+                                    {
+                                        <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@reply._OGThread.author.login"><img class="mr-3 flex-shrink-0 rounded-circle wall-of-fame-img border" src="@reply._OGThread.author.pfp" alt="Generic placeholder image"></a>
+                                    }
+                                    else
+                                    {
+                                        <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@reply._OGThread.author.login"><img class="mr-3 flex-shrink-0 rounded-circle wall-of-fame-img border" src="../content/default/pfp_default.svg" alt="Generic placeholder image"></a>
+                                    }
                                 </div>
-                                <!-- Recursion -->
-                                @{
-                                    await RenderRepliesAsync(reply._replies, level + 1);
-                                }
+                                <div class="col d-flex align-items-center justify-content-start p-0 ps-2 pt-2">
+                                    <a class="text-decoration-none text-reset" asp-controller="Profile" asp-action="Index" asp-route-login="@reply._OGThread.author.login">
+                                        <h6>
+                                            @reply._OGThread.author.nickname
+                                            @if (reply._OGThread.author.role == 1)
+                                            {
+                                                <span class="badge rounded-pill text-bg-warning">MOD</span>
+                                            }
+                                            <small class="text-muted">#@reply._OGThread.author.login</small>
+                                        </h6>
+                                    </a>
+                                </div>
+                                <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
+                                    @if (reply._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
+                                    {
+                                        <button type="button" class="btn btn-mico btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
+                                    }
+
+                                    @if ((reply._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _)) || Context.Session.GetInt32("Role") == 1)
+                                    {
+                                        <a type="button" class="btn btn-danger btn-sm me-2" asp-controller="Thread" asp-action="Delete" asp-route-id="@reply._OGThread.id">Delete</a>
+                                    }
+                                    <small>@reply._OGThread.creation_date.UtcDateTime</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto d-flex p-0">
+                                    <div class="vr vr-size-and-position"></div>
+                                </div>
+                                <div class="col d-flex flex-column">
+                                    <p class="align-items-start border rounded p-1 m-1 bg-secondary bg-opacity-10">
+                                        @reply._OGThread.description
+                                    </p>
+                                    @if (reply._OGThread.thread_images != null && reply._OGThread.thread_images.Any())
+                                    {
+                                        <div class="row d-grid justify-content-center align-items-center mb-2">
+                                            <div class="text-center">
+                                                @foreach (var image in reply._OGThread.thread_images)
+                                                {
+                                                    <img class="flex-shrink-0 mt-2 w-50 h-auto" src="@image.image" alt="Thread Image">
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                    <div class="row d-flex">
+                                        <div class="col-auto text-warning">
+                                            <i class="bi bi-star-fill"></i> : @reply._score
+                                        </div>
+                                        <div class="col-10">
+                                            <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
+                                                @if (reply._OGThread.id_author != Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
+                                                {
+                                                    <form asp-controller="Thread" asp-action="Index" method="post">
+                                                        <input type="hidden" asp-for="id_liked_thread" value="@reply._OGThread.id" />
+                                                        <input type="hidden" asp-for="id_disliked_thread" />
+                                                        @if (reply.LikeDislikeStatus == 1)
+                                                        {
+                                                            <button type="submit" class="btn btn-sm btn-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="submit" class="btn btn-sm btn-outline-success"><i class="bi bi-hand-thumbs-up"></i></button>
+                                                        }
+                                                    </form>
+                                                    <form asp-controller="Thread" asp-action="Index" method="post">
+                                                        <input type="hidden" asp-for="id_liked_thread" />
+                                                        <input type="hidden" asp-for="id_disliked_thread" value="@reply._OGThread.id" />
+                                                        @if (reply.LikeDislikeStatus == -1)
+                                                        {
+                                                            <button type="submit" class="btn btn-sm btn-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-hand-thumbs-down"></i></button>
+                                                        }
+                                                    </form>
+                                                }
+
+                                                @if (Context.Session.TryGetValue("UserId", out _))
+                                                {
+                                                    <a type="button" class="btn btn-outline-secondary" asp-controller="Thread" asp-action="Reply" asp-route-id="@reply._OGThread.id"><i class="bi bi-chat-left-dots"></i></a>
+                                                }
+                                                else
+                                                {
+                                                    <a type="button" class="btn btn-outline-secondary" asp-controller="Authorization" asp-action="Login"><i class="bi bi-chat-left-dots"></i></a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Recursion -->
+                                    @{
+                                        await RenderRepliesAsync(reply._replies, level + 1);
+                                    }
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="row ms-@(level)">
+                        <div class="col">
+                            <div class="row align-item-center justify-content-start mt-2">
+                                <div class="col-auto p-0">
+                                    <img class="mr-3 flex-shrink-0 rounded-circle wall-of-fame-img border border-danger" src="../content/default/pfp_default.svg" alt="Generic placeholder image">
+                                </div>
+                                <div class="col d-flex align-items-center justify-content-start p-0 ps-2 pt-2 text-danger">
+                                    <h6>
+                                        DELETED<small class="text-muted">#DELETED</small>
+                                    </h6>
+                                </div>
+                                <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
+                                    <small>@reply._OGThread.creation_date.UtcDateTime</small>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto d-flex p-0">
+                                    <div class="vr vr-size-and-position"></div>
+                                </div>
+                                <div class="col d-flex flex-column">
+                                    <p class="align-items-start border border-danger rounded p-1 m-1 bg-secondary bg-opacity-10 text-center text-danger">
+                                        DELETED
+                                    </p>
+                                    <div class="row d-flex">
+                                        <div class="col-10">
+                                            <div class="btn-group btn-group-sm threads-list-btn" role="group" aria-label="Basic example">
+                                                @if (Context.Session.TryGetValue("UserId", out _))
+                                                {
+                                                    <a type="button" class="btn btn-outline-secondary" asp-controller="Thread" asp-action="Reply" asp-route-id="@reply._OGThread.id"><i class="bi bi-chat-left-dots"></i></a>
+                                                }
+                                                else
+                                                {
+                                                    <a type="button" class="btn btn-outline-secondary" asp-controller="Authorization" asp-action="Login"><i class="bi bi-chat-left-dots"></i></a>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Recursion -->
+                                    @{
+                                        await RenderRepliesAsync(reply._replies, level + 1);
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
             }
         }
     }

@@ -30,11 +30,19 @@ namespace MiCo.Controllers
             return View(result);
         }
 
+        /// <summary>
+        /// Default privacy page
+        /// </summary>
+        /// <returns>Privacy view</returns>
         public IActionResult Privacy()
         {
             return View();
         }
 
+        /// <summary>
+        /// Method used to render page with errors
+        /// </summary>
+        /// <returns>Errors</returns>
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

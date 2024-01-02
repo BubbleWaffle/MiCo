@@ -3,8 +3,6 @@ using MiCo.Helpers;
 using MiCo.Models.ViewModels;
 using MiCo.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace MiCo.Services
 {
@@ -379,6 +377,40 @@ namespace MiCo.Services
             }
 
             return new ResultHelper(false, "You can't do that!");
+        }
+
+        public async Task<ResultHelper> ThreadDelete(int thread_id, int? user_id, ThreadDeleteViewModel model)
+        {
+            var thread = _context.threads.FirstOrDefault(t => t.id == thread_id);
+
+            var user = _context.users.FirstOrDefault(u => u.id == user_id);
+
+            if (thread != null && user != null && Utilities.Tools.VerifyPassword(model.password, user.password) && !string.IsNullOrWhiteSpace(model.password))
+            {
+                if (thread.id_OG_thread == null)
+                {
+                    var threadsToDelete = _context.threads.Where(t => t.id_OG_thread == thread_id || t.id == thread_id);
+
+                    foreach (var threadToDelete in threadsToDelete)
+                    {
+                        threadToDelete.deleted = true;
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    return new ResultHelper(true, "Thread successfully deleted!", -1);
+                }
+                else
+                {
+                    thread.deleted = true;
+
+                    await _context.SaveChangesAsync();
+
+                    return new ResultHelper(true, "Thread successfully deleted!", thread.id_OG_thread ?? default(int));
+                }
+            }
+
+            return new ResultHelper(false, "Incorrect password!");
         }
     }
 }

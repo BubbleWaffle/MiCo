@@ -130,5 +130,62 @@ namespace MiCo.Controllers
 
             return View(model);
         }
+
+        /// <summary>
+        /// Method used to render delete view
+        /// </summary>
+        /// <param name="id">Id thread to delete</param>
+        /// <returns>Delete view or redirect to Home view</returns>
+        [HttpGet("/Thread/Delete={id}")]
+        public IActionResult Delete([FromRoute(Name = "id")] int id)
+        {
+            var threadExists = _context.threads.FirstOrDefault(t => t.id == id);
+
+            if (!HttpContext.Session.TryGetValue("UserId", out _) || threadExists == null || (threadExists.id_author != HttpContext.Session.GetInt32("UserId") && HttpContext.Session.GetInt32("Role") != 1))
+                return RedirectToAction("Index", "Home");
+
+            var thread = new ThreadDeleteViewModel();
+
+            if (threadExists.id_OG_thread == null)
+            {
+                thread.thread_id = threadExists.id;
+            }
+            else
+            {
+                thread.thread_id = threadExists.id_OG_thread ?? default(int);
+            }
+
+            return View(thread);
+        }
+
+        /// <summary>
+        /// Method used to reply
+        /// </summary>
+        /// <param name="id">Id thread to reply</param>
+        /// <param name="model">View model passing reply data to service</param>
+        /// <returns>Reply view with error or redirect to thread view</returns>
+        [HttpPost("/Thread/Delete={id}")]
+        public async Task<IActionResult> Delete([FromRoute(Name = "id")] int id, ThreadDeleteViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await _threadService.ThreadDelete(id, HttpContext.Session.GetInt32("UserId"), model);
+
+                if (result.RHsuccess && result.RHno == -1)
+                {
+                    return RedirectToAction("Index", "Home");
+                }
+                else if (result.RHsuccess && result.RHno > 0)
+                {
+                    return RedirectToAction("Index", new { id = result.RHno });
+                }
+                else
+                {
+                    ModelState.AddModelError("", result.RHmessage);
+                }
+            }
+
+            return View(model);
+        }
     }
 }
