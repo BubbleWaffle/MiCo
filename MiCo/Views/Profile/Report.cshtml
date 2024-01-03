@@ -11,7 +11,7 @@
             <textarea class="form-control" id="reason" rows="3" placeholder="Enter reason..." asp-for="reason" required></textarea>
             <small id="loginHelp" class="form-text text-danger">Max 300 characters!</small>
             <div class="d-flex justify-content-center">
-                <a type="submit" class="btn btn-mico btn-sm mt-2 me-1" asp-controller="Home" asp-action="Index">Back to home</a>
+                <a class="btn btn-mico btn-sm mt-2 me-1" asp-controller="Profile" asp-action="Index" asp-route-login="@ViewBag.name">Back to profile</a>
                 <button type="submit" class="btn btn-danger btn-sm mt-2 ms-1">Report user</button>
             </div>
         </form>
