@@ -38,7 +38,7 @@
         <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
             @if (Model._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
             {
-                <button type="button" class="btn btn-mico btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
+                <a class="btn btn-mico btn-sm me-2" asp-controller="Thread" asp-action="Edit" asp-route-id="@Model._OGThread.id">Edit</a>
             }
 
             @if ((Model._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _)) || Context.Session.GetInt32("Role") == 1)
@@ -159,7 +159,7 @@
                                 <div class="col d-flex align-items-center justify-content-end p-0 ps-2 pt-2">
                                     @if (reply._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _))
                                     {
-                                        <button type="button" class="btn btn-mico btn-sm me-2" data-bs-toggle="modal" data-bs-target="#exampleModalEdit">Edit</button>
+                                        <a class="btn btn-mico btn-sm me-2" asp-controller="Thread" asp-action="Edit" asp-route-id="@reply._OGThread.id">Edit</a>
                                     }
 
                                     @if ((reply._OGThread.id_author == Context.Session.GetInt32("UserId") && Context.Session.TryGetValue("UserId", out _)) || Context.Session.GetInt32("Role") == 1)

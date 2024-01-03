@@ -12,6 +12,7 @@ namespace MiCo.Services
         Task ThreadLike(int? id, int? user_id);
         Task ThreadDislike(int? id, int? user_id);
         Task<ResultHelper> ThreadReply(int OG_Thread_id, int? user_id, ThreadReplyViewModel model);
+        Task<ThreadEditViewModel> ThreadToEdit(int thread_id);
         Task<ResultHelper> ThreadDelete(int thread_id, int? user_id, ThreadDeleteViewModel model);
     }
 }

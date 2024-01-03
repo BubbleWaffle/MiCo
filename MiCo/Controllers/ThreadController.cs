@@ -97,9 +97,9 @@ namespace MiCo.Controllers
         [HttpGet("/Thread/Reply={id}")]
         public IActionResult Reply([FromRoute(Name = "id")] int id) 
         { 
-            var thredExists = _context.threads.FirstOrDefault(t => t.id == id);
+            var threadExists = _context.threads.FirstOrDefault(t => t.id == id);
 
-            if (!HttpContext.Session.TryGetValue("UserId", out _) || thredExists == null)
+            if (!HttpContext.Session.TryGetValue("UserId", out _) || threadExists == null)
                 return RedirectToAction("Index", "Home");
 
             return View();
@@ -127,6 +127,40 @@ namespace MiCo.Controllers
                     ModelState.AddModelError("", result.RHmessage);
                 }
             }
+
+            return View(model);
+        }
+
+        [HttpGet("/Thread/Edit={id}")]
+        public async Task<IActionResult> Edit([FromRoute(Name = "id")] int id)
+        {
+            var threadExists = _context.threads.FirstOrDefault(t => t.id == id);
+
+            if (!HttpContext.Session.TryGetValue("UserId", out _) || threadExists == null || threadExists.id_author != HttpContext.Session.GetInt32("UserId"))
+                return RedirectToAction("Index", "Home");
+
+            var ThreadToEdit = await _threadService.ThreadToEdit(threadExists.id);
+
+            return View(ThreadToEdit);
+        }
+
+
+        [HttpPost("/Thread/Edit={id}")]
+        public async Task<IActionResult> Edit([FromRoute(Name = "id")] int id, ThreadEditViewModel model)
+        {
+            /*if (ModelState.IsValid)
+            {
+                //var result = await _threadService.ThreadReply(id, HttpContext.Session.GetInt32("UserId"));
+
+                if (result.RHsuccess)
+                {
+                    return RedirectToAction("Index", new { id = result.RHno });
+                }
+                else
+                {
+                    ModelState.AddModelError("", result.RHmessage);
+                }
+            }*/
 
             return View(model);
         }

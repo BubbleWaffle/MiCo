@@ -3,6 +3,7 @@ using MiCo.Helpers;
 using MiCo.Models.ViewModels;
 using MiCo.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace MiCo.Services
 {
@@ -377,6 +378,35 @@ namespace MiCo.Services
             }
 
             return new ResultHelper(false, "You can't do that!");
+        }
+
+        public Task<ThreadEditViewModel> ThreadToEdit(int thread_id)
+        {
+            var thread = _context.threads
+                .Include(t => t.thread_tags!)
+                .ThenInclude(tt => tt.tag)
+                .FirstOrDefault(t => t.id == thread_id);
+
+            var existingThread = new ThreadEditViewModel();
+
+            if (thread != null)
+            {
+                if (thread.id_reply == null && thread.id_OG_thread == null)
+                {
+                    existingThread.title = thread.title;
+
+                    if (thread.thread_tags != null && thread.thread_tags.Any())
+                    {
+                        existingThread.tags = string.Join(" ", thread.thread_tags.Select(tt => tt.tag.tag));
+                    }
+
+                    existingThread.OG_thread = thread.id;
+                }
+
+                existingThread.description = thread.description;
+            }
+
+            return Task.FromResult(existingThread);
         }
 
         public async Task<ResultHelper> ThreadDelete(int thread_id, int? user_id, ThreadDeleteViewModel model)
