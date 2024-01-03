@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MiCo.Migrations
 {
     [DbContext(typeof(MiCoDbContext))]
-    [Migration("20240101175916_InitialCreate")]
+    [Migration("20240103174444_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -21,6 +21,9 @@ namespace MiCo.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "8.0.0")
+                .HasAnnotation("Proxies:ChangeTracking", false)
+                .HasAnnotation("Proxies:CheckEquality", false)
+                .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -249,6 +252,19 @@ namespace MiCo.Migrations
                     b.HasKey("id");
 
                     b.ToTable("users");
+
+                    b.HasData(
+                        new
+                        {
+                            id = 1,
+                            creation_date = new DateTimeOffset(new DateTime(2024, 1, 3, 17, 44, 44, 101, DateTimeKind.Unspecified).AddTicks(8793), new TimeSpan(0, 0, 0, 0, 0)),
+                            email = "admin@mail.mod",
+                            login = "admin",
+                            nickname = "admin",
+                            password = "pEqXLhVK9wB5vMLHGrBypObadOdL1Ud7E2AEsNwMP5uiCyni",
+                            role = 1,
+                            status = 0
+                        });
                 });
 
             modelBuilder.Entity("MiCo.Models.Bans", b =>

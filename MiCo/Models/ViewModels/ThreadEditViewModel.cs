@@ -6,11 +6,9 @@ namespace MiCo.Models.ViewModels
     {
         public int OG_thread = -1;
 
-        [Required]
-        public string title { get; set; } = null!;
+        public string? title { get; set; }
 
-        [Required]
-        public string description { get; set; } = null!;
+        public string? description { get; set; }
 
         public string? tags { get; set; }
 

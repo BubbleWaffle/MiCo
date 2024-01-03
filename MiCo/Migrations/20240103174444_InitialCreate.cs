@@ -201,6 +201,11 @@ namespace MiCo.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "users",
+                columns: new[] { "id", "creation_date", "email", "login", "nickname", "password", "pfp", "role", "status" },
+                values: new object[] { 1, new DateTimeOffset(new DateTime(2024, 1, 3, 17, 44, 44, 101, DateTimeKind.Unspecified).AddTicks(8793), new TimeSpan(0, 0, 0, 0, 0)), "admin@mail.mod", "admin", "admin", "pEqXLhVK9wB5vMLHGrBypObadOdL1Ud7E2AEsNwMP5uiCyni", null, 1, 0 });
+
             migrationBuilder.CreateIndex(
                 name: "IX_bans_id_banned_user",
                 table: "bans",

@@ -37,8 +37,14 @@ namespace MiCo.Services
                 .CountAsync(t => t.author.login == login && !t.deleted);
 
             int fullScore = await _context.likes
-                .Where(l => l.user.login == login && !l.thread.deleted)
-                .SumAsync(l => l.like_or_dislike);
+                .GroupJoin(
+                    _context.threads.Where(t => t.author.login == login && !t.deleted),
+                    like => like.thread.id,
+                    thread => thread.id,
+                    (like, threads) => new { Like = like, Threads = threads }
+                )
+                .Where(joined => joined.Threads.Any())
+                .SumAsync(joined => joined.Like.like_or_dislike);
 
             var profileContentViewModel = new ProfileContentViewModel
             {
@@ -54,6 +60,11 @@ namespace MiCo.Services
             return profileContentViewModel;
         }
 
+        /// <summary>
+        /// Method used to load List of current profile threads
+        /// </summary>
+        /// <param name="login">User account name passing by URL</param>
+        /// <returns>List of threads</returns>
         public async Task<List<ThreadsAndScoreViewModel>> ProfileThreads(string? login)
         {
             var threadsList = await _context.threads
@@ -113,7 +124,8 @@ namespace MiCo.Services
                 if (!Utilities.Tools.VerifyPassword(model.old_password, user.password))
                     return new ResultHelper(false, "Incorrect password!");
 
-                if (!string.IsNullOrWhiteSpace(model.nickname) && Utilities.Tools.IsValidLoginOrNickname(model.nickname)) user.nickname = model.nickname;
+                if (!string.IsNullOrWhiteSpace(model.nickname)) user.nickname = model.nickname;
+
 
                 if (!string.IsNullOrWhiteSpace(model.login))
                 {
@@ -225,6 +237,11 @@ namespace MiCo.Services
                     thread.deleted = true;
                     _context.threads.Update(thread);
                 }
+
+                var likesToDelete = _context.likes
+                    .Where(l => l.id_user == user.id);
+
+                _context.likes.RemoveRange(likesToDelete);
 
                 _context.users.Update(user);
                 await _context.SaveChangesAsync();

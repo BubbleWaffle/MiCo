@@ -131,7 +131,6 @@ namespace MiCo.Controllers
         /// <returns>Delete profile view or redirect to Home view</returns>
         public IActionResult Delete()
         {
-            /* If not logged in block access */
             if (!HttpContext.Session.TryGetValue("UserId", out _))
                 return RedirectToAction("Index", "Home");
 

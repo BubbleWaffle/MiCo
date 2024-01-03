@@ -63,6 +63,20 @@ namespace MiCo.Data
 
             modelBuilder.Entity<ThreadTags>().HasKey(tt => new { tt.id_thread, tt.id_tag });
 
+            /* Add administrator acc */
+            modelBuilder.Entity<Users>().HasData(
+                    new Users
+                    {
+                        id = 1,
+                        nickname = "admin",
+                        login = "admin",
+                        password = Utilities.Tools.HashPassword("Admin#123"),
+                        email = "admin@mail.mod",
+                        creation_date = DateTimeOffset.UtcNow,
+                        role = 1,
+                        status = 0
+                    });
+
             base.OnModelCreating(modelBuilder);
         }
 

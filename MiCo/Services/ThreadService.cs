@@ -30,7 +30,7 @@ namespace MiCo.Services
             {
                 string[]? tagsArray = null;
 
-                if (string.IsNullOrWhiteSpace(model.title) && !Utilities.Tools.IsValidTitle(model.title))
+                if (string.IsNullOrWhiteSpace(model.title) || Utilities.Tools.IsValidTitle(model.title))
                     return new ResultHelper(false, "Invalid title!");
 
                 if (model.title.Length >= 75)
@@ -380,6 +380,11 @@ namespace MiCo.Services
             return new ResultHelper(false, "You can't do that!");
         }
 
+        /// <summary>
+        /// Method used to load some data to Edit view
+        /// </summary>
+        /// <param name="thread_id">Thread id</param>
+        /// <returns>View model with data</returns>
         public Task<ThreadEditViewModel> ThreadToEdit(int thread_id)
         {
             var thread = _context.threads
@@ -397,7 +402,7 @@ namespace MiCo.Services
 
                     if (thread.thread_tags != null && thread.thread_tags.Any())
                     {
-                        existingThread.tags = string.Join(" ", thread.thread_tags.Select(tt => tt.tag.tag));
+                        existingThread.tags = string.Join(" ", thread.thread_tags.Select(tt => tt.tag.tag)).Replace("#", string.Empty);
                     }
 
                     existingThread.OG_thread = thread.id;
@@ -409,6 +414,197 @@ namespace MiCo.Services
             return Task.FromResult(existingThread);
         }
 
+        /// <summary>
+        /// Method used to edi thread
+        /// </summary>
+        /// <param name="thread_id">Thread id to edit</param>
+        /// <param name="model">View model passing edit data</param>
+        /// <param name="deleteFiles">Delete files or don't</param>
+        /// <returns>Helper reporting success or error</returns>
+        public async Task<ResultHelper> ThreadEdit(int thread_id, ThreadEditViewModel model, bool deleteFiles)
+        {
+            var thread = await _context.threads
+                .Include(t => t.thread_tags)
+                .FirstOrDefaultAsync(t => t.id == thread_id);
+
+            if (model != null && thread != null)
+            {
+                int threadToRedirect;
+                string[]? tagsArray = null;
+
+                if (thread.id_OG_thread == null)
+                {
+                    threadToRedirect = thread.id;
+                }
+                else
+                {
+                    threadToRedirect = thread.id_OG_thread ?? default(int);
+                }
+
+                if (model.OG_thread == -1)
+                    model.title = thread.title;
+
+                if (string.IsNullOrWhiteSpace(model.title) || Utilities.Tools.IsValidTitle(model.title!))
+                    return new ResultHelper(false, "Invalid title!");
+
+                if (model.title!.Length >= 75)
+                    return new ResultHelper(false, "Title is too long (MAX 75 characters)!");
+
+                if (string.IsNullOrWhiteSpace(model.description))
+                    return new ResultHelper(false, "Description can't be empty!");
+
+                if (model.description.Length > 500)
+                    return new ResultHelper(false, "Description is too long (MAX 500 characters)!");
+
+                if (model.files != null && model.files.Count > 3)
+                    return new ResultHelper(false, "You can send only 3 files!");
+
+                if (!string.IsNullOrWhiteSpace(model.tags))
+                {
+                    tagsArray = model.tags.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                    if (!tagsArray.All(tag => Utilities.Tools.IsValidTags(tag)))
+                        return new ResultHelper(false, "Invalid tags!");
+
+                    tagsArray = tagsArray.Select(tag => $"#{tag.Trim()}").Distinct().ToArray();
+
+                    if (tagsArray.Length > 9)
+                        return new ResultHelper(false, "Too many tags (MAX 9)!");
+                }
+
+                thread.title = model.title;
+                thread.description = model.description;
+                _context.threads.Update(thread);
+                await _context.SaveChangesAsync();
+
+                var relatedThreads = await _context.threads
+                    .Where(t => t.id_OG_thread == thread_id)
+                    .ToListAsync();
+
+                foreach (var relatedThread in relatedThreads)
+                {
+                    relatedThread.title = model.title;
+                    relatedThread.description = model.description;
+                    _context.threads.Update(relatedThread);
+                }
+
+                _context.thread_tags.RemoveRange(thread.thread_tags!);
+                await _context.SaveChangesAsync();
+
+                if (tagsArray != null)
+                {
+                    foreach (var tagText in tagsArray)
+                    {
+                        var existingTag = await _context.tags.FirstOrDefaultAsync(t => t.tag == tagText);
+
+                        if (existingTag == null)
+                        {
+                            var newTag = new Tags
+                            {
+                                tag = tagText
+                            };
+                            _context.tags.Add(newTag);
+                            await _context.SaveChangesAsync();
+
+                            var threadTag = new ThreadTags
+                            {
+                                id_thread = thread.id,
+                                id_tag = newTag.id
+                            };
+
+                            _context.thread_tags.Add(threadTag);
+                        }
+                        else
+                        {
+                            var threadTag = new ThreadTags
+                            {
+                                id_thread = thread.id,
+                                id_tag = existingTag.id
+                            };
+
+                            _context.thread_tags.Add(threadTag);
+                        }
+
+                        await _context.SaveChangesAsync();
+                    }
+                }
+
+                if (model.files != null && model.files.Count > 0)
+                {
+                    _context.images.RemoveRange(thread.thread_images!);
+                    await _context.SaveChangesAsync();
+
+                    string threadFolderName = thread.id.ToString();
+                    string threadFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "thread", threadFolderName);
+
+                    if (!Directory.Exists(threadFolder))
+                    {
+                        Directory.CreateDirectory(threadFolder);
+                    }
+                    else
+                    {
+                        DirectoryInfo directory = new DirectoryInfo(threadFolder);
+
+                        foreach (FileInfo fileToDelete in directory.GetFiles())
+                        {
+                            fileToDelete.Delete();
+                        }
+                    }
+
+                    int counter = 1;
+
+                    foreach (var file in model.files)
+                    {
+                        string uniqueFileName = $"{counter}{Path.GetExtension(file.FileName)}";
+                        string filePath = Path.Combine(threadFolder, uniqueFileName);
+
+                        using (var fileStream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(fileStream);
+                        }
+
+                        var image = new Images
+                        {
+                            id_which_thread = thread.id,
+                            image = $"../content/thread/{threadFolderName}/{uniqueFileName}"
+                        };
+
+                        _context.images.Add(image);
+                        await _context.SaveChangesAsync();
+
+                        counter++;
+                    }
+                }
+
+                if (deleteFiles)
+                {
+                    _context.images.RemoveRange(thread.thread_images!);
+                    await _context.SaveChangesAsync();
+
+                    string threadFolderName = thread.id.ToString();
+                    string threadFolder = Path.Combine(_hostEnvironment.WebRootPath, "content", "thread", threadFolderName);
+
+                    if (Directory.Exists(threadFolder))
+                    {
+                        Directory.Delete(threadFolder, true);
+                    }
+                }
+
+                model.OG_thread = threadToRedirect;
+
+                return new ResultHelper(true, "Thread created successfully!", threadToRedirect);
+            }
+
+            return new ResultHelper(false, "You can't do that!");
+        }
+
+        /// <summary>
+        /// Method used to delete thread
+        /// </summary>
+        /// <param name="thread_id">Thread id to delete</param>
+        /// <param name="user_id">User id passing from session</param>
+        /// <param name="model">View model passing delete data</param>
+        /// <returns>Helper reporting success or error</returns>
         public async Task<ResultHelper> ThreadDelete(int thread_id, int? user_id, ThreadDeleteViewModel model)
         {
             var thread = _context.threads.FirstOrDefault(t => t.id == thread_id);

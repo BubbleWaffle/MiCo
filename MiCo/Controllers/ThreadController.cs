@@ -131,6 +131,11 @@ namespace MiCo.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Method used to render Edith thread view
+        /// </summary>
+        /// <param name="id">Thread id</param>
+        /// <returns>Returns view with some data</returns>
         [HttpGet("/Thread/Edit={id}")]
         public async Task<IActionResult> Edit([FromRoute(Name = "id")] int id)
         {
@@ -144,13 +149,20 @@ namespace MiCo.Controllers
             return View(ThreadToEdit);
         }
 
-
+        /// <summary>
+        /// Method used to edit thread
+        /// </summary>
+        /// <param name="id">Thread id</param>
+        /// <param name="model">View model passing edit data to service</param>
+        /// <returns>Edit view with error or redirect to thread view</returns>
         [HttpPost("/Thread/Edit={id}")]
         public async Task<IActionResult> Edit([FromRoute(Name = "id")] int id, ThreadEditViewModel model)
         {
-            /*if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                //var result = await _threadService.ThreadReply(id, HttpContext.Session.GetInt32("UserId"));
+                bool deleteFiles = !string.IsNullOrEmpty(model.delete_files) && model.delete_files.ToLower() == "true";
+
+                var result = await _threadService.ThreadEdit(id, model, deleteFiles);
 
                 if (result.RHsuccess)
                 {
@@ -160,7 +172,7 @@ namespace MiCo.Controllers
                 {
                     ModelState.AddModelError("", result.RHmessage);
                 }
-            }*/
+            }
 
             return View(model);
         }
